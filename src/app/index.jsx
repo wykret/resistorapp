@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Animated,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -26,7 +27,7 @@ import {
 } from "@/utils/resistorColors";
 
 const ColorBand = ({ color, onPress, isSelected, size = "medium" }) => {
-  const { colors } = useTheme();
+  const { colors, glassmorphism } = useTheme();
   const colorData = RESISTOR_COLORS[color];
   const bandSize = size === "large" ? 60 : size === "small" ? 30 : 40;
 
@@ -37,23 +38,23 @@ const ColorBand = ({ color, onPress, isSelected, size = "medium" }) => {
         width: bandSize,
         height: bandSize,
         backgroundColor: colorData.color,
-        borderRadius: 8,
+        borderRadius: 12,
         borderWidth: isSelected ? 3 : 1,
-        borderColor: isSelected ? colors.primary : colors.border,
+        borderColor: isSelected ? colors.primary : glassmorphism.borderColor,
         marginHorizontal: 4,
         marginVertical: 4,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        shadowColor: isSelected ? glassmorphism.shadowColor : "#000",
+        shadowOffset: { width: 0, height: isSelected ? 6 : 2 },
+        shadowOpacity: isSelected ? glassmorphism.shadowOpacity : 0.15,
+        shadowRadius: isSelected ? 12 : 4,
+        elevation: isSelected ? 8 : 3,
       }}
     />
   );
 };
 
 const ResistorDisplay = ({ bands, bandCount }) => {
-  const { colors } = useTheme();
+  const { colors, glassmorphism } = useTheme();
 
   return (
     <View
@@ -61,16 +62,16 @@ const ResistorDisplay = ({ bands, bandCount }) => {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#D2B48C",
-        borderRadius: 20,
-        paddingVertical: 20,
-        paddingHorizontal: 30,
+        backgroundColor: "transparent",
+        borderRadius: 24,
+        paddingVertical: 24,
+        paddingHorizontal: 32,
         marginVertical: 20,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 8,
-        elevation: 5,
+        shadowColor: glassmorphism.shadowColor,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: glassmorphism.shadowOpacity,
+        shadowRadius: 16,
+        elevation: 8,
       }}
     >
       {/* Resistor body */}
@@ -138,6 +139,10 @@ export default function Home() {
   const [inputValue, setInputValue] = useState("");
   const [result, setResult] = useState(null);
   const [showMenu, setShowMenu] = useState(false);
+  
+  // Animações
+  const menuAnimation = useRef(new Animated.Value(0)).current;
+  const fadeAnimation = useRef(new Animated.Value(1)).current;
 
   // Reset bands and result when band count changes
   useEffect(() => {
@@ -148,6 +153,23 @@ export default function Home() {
   useEffect(() => {
     resetCalculator();
   }, [mode]);
+
+  // Animações do menu
+  useEffect(() => {
+    if (showMenu) {
+      Animated.timing(menuAnimation, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(menuAnimation, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [showMenu]);
 
   const handleColorSelect = useCallback(
     (bandIndex, color) => {
@@ -219,11 +241,16 @@ export default function Home() {
         <TouchableOpacity
           onPress={() => setShowMenu(!showMenu)}
           style={{
-            padding: 10,
-            borderRadius: 12,
+            padding: 12,
+            borderRadius: 16,
             backgroundColor: glassmorphism.backgroundColor,
             borderWidth: 1,
             borderColor: glassmorphism.borderColor,
+            shadowColor: glassmorphism.shadowColor,
+            shadowOffset: glassmorphism.shadowOffset,
+            shadowOpacity: glassmorphism.shadowOpacity,
+            shadowRadius: glassmorphism.shadowRadius,
+            elevation: 8,
           }}
         >
           <Menu size={24} color={colors.text} />
@@ -244,11 +271,16 @@ export default function Home() {
         <TouchableOpacity
           onPress={toggleTheme}
           style={{
-            padding: 10,
-            borderRadius: 12,
+            padding: 12,
+            borderRadius: 16,
             backgroundColor: glassmorphism.backgroundColor,
             borderWidth: 1,
             borderColor: glassmorphism.borderColor,
+            shadowColor: glassmorphism.shadowColor,
+            shadowOffset: glassmorphism.shadowOffset,
+            shadowOpacity: glassmorphism.shadowOpacity,
+            shadowRadius: glassmorphism.shadowRadius,
+            elevation: 8,
           }}
         >
           {isDark ? (
@@ -261,23 +293,43 @@ export default function Home() {
 
       {/* Menu Overlay */}
       {showMenu && (
-        <View
+        <Animated.View
           style={{
             position: "absolute",
             top: insets.top + 60,
             left: 20,
             right: 20,
             zIndex: 1000,
+            opacity: menuAnimation,
+            transform: [
+              {
+                scale: menuAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0.8, 1],
+                }),
+              },
+              {
+                translateY: menuAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [-20, 0],
+                }),
+              },
+            ],
           }}
         >
           <BlurView
-            intensity={20}
+            intensity={glassmorphism.blurIntensityHeavy}
             style={{
-              borderRadius: 16,
+              borderRadius: 20,
               overflow: "hidden",
-              backgroundColor: glassmorphism.backgroundColor,
+              backgroundColor: glassmorphism.backgroundColorHeavy,
               borderWidth: 1,
               borderColor: glassmorphism.borderColor,
+              shadowColor: glassmorphism.shadowColor,
+              shadowOffset: { width: 0, height: 12 },
+              shadowOpacity: glassmorphism.shadowOpacity,
+              shadowRadius: 20,
+              elevation: 12,
             }}
           >
             <TouchableOpacity
@@ -324,7 +376,7 @@ export default function Home() {
               </Text>
             </TouchableOpacity>
           </BlurView>
-        </View>
+        </Animated.View>
       )}
 
       <ScrollView
@@ -338,11 +390,16 @@ export default function Home() {
             flexDirection: "row",
             marginHorizontal: 20,
             marginVertical: 10,
-            borderRadius: 12,
+            borderRadius: 16,
             backgroundColor: glassmorphism.backgroundColor,
             borderWidth: 1,
             borderColor: glassmorphism.borderColor,
             overflow: "hidden",
+            shadowColor: glassmorphism.shadowColor,
+            shadowOffset: glassmorphism.shadowOffset,
+            shadowOpacity: glassmorphism.shadowOpacity,
+            shadowRadius: glassmorphism.shadowRadius,
+            elevation: 6,
           }}
         >
           <TouchableOpacity
@@ -391,11 +448,16 @@ export default function Home() {
             flexDirection: "row",
             marginHorizontal: 20,
             marginVertical: 10,
-            borderRadius: 12,
+            borderRadius: 16,
             backgroundColor: glassmorphism.backgroundColor,
             borderWidth: 1,
             borderColor: glassmorphism.borderColor,
             overflow: "hidden",
+            shadowColor: glassmorphism.shadowColor,
+            shadowOffset: glassmorphism.shadowOffset,
+            shadowOpacity: glassmorphism.shadowOpacity,
+            shadowRadius: glassmorphism.shadowRadius,
+            elevation: 6,
           }}
         >
           <TouchableOpacity
@@ -447,14 +509,19 @@ export default function Home() {
             }}
           >
             <BlurView
-              intensity={20}
+              intensity={glassmorphism.blurIntensity}
               style={{
-                borderRadius: 16,
+                borderRadius: 20,
                 overflow: "hidden",
                 backgroundColor: glassmorphism.backgroundColor,
                 borderWidth: 1,
                 borderColor: glassmorphism.borderColor,
-                padding: 20,
+                padding: 24,
+                shadowColor: glassmorphism.shadowColor,
+                shadowOffset: glassmorphism.shadowOffset,
+                shadowOpacity: glassmorphism.shadowOpacity,
+                shadowRadius: glassmorphism.shadowRadius,
+                elevation: 8,
               }}
             >
               <Text
@@ -511,14 +578,19 @@ export default function Home() {
             {Array.from({ length: bandCount }, (_, bandIndex) => (
               <View key={bandIndex} style={{ marginVertical: 10 }}>
                 <BlurView
-                  intensity={20}
+                  intensity={glassmorphism.blurIntensityLight}
                   style={{
-                    borderRadius: 16,
+                    borderRadius: 18,
                     overflow: "hidden",
-                    backgroundColor: glassmorphism.backgroundColor,
+                    backgroundColor: glassmorphism.backgroundColorLight,
                     borderWidth: 1,
                     borderColor: glassmorphism.borderColor,
-                    padding: 15,
+                    padding: 18,
+                    shadowColor: glassmorphism.shadowColor,
+                    shadowOffset: { width: 0, height: 4 },
+                    shadowOpacity: glassmorphism.shadowOpacity * 0.7,
+                    shadowRadius: 8,
+                    elevation: 4,
                   }}
                 >
                   <Text
@@ -564,14 +636,19 @@ export default function Home() {
             }}
           >
             <BlurView
-              intensity={20}
+              intensity={glassmorphism.blurIntensity}
               style={{
-                borderRadius: 16,
+                borderRadius: 20,
                 overflow: "hidden",
                 backgroundColor: glassmorphism.backgroundColor,
                 borderWidth: 1,
                 borderColor: glassmorphism.borderColor,
-                padding: 20,
+                padding: 24,
+                shadowColor: glassmorphism.shadowColor,
+                shadowOffset: glassmorphism.shadowOffset,
+                shadowOpacity: glassmorphism.shadowOpacity,
+                shadowRadius: glassmorphism.shadowRadius,
+                elevation: 8,
               }}
             >
               <Text
@@ -638,11 +715,16 @@ export default function Home() {
             marginHorizontal: 20,
             marginVertical: 10,
             backgroundColor: colors.success,
-            borderRadius: 12,
-            padding: 15,
+            borderRadius: 16,
+            padding: 18,
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
+            shadowColor: glassmorphism.shadowColor,
+            shadowOffset: glassmorphism.shadowOffset,
+            shadowOpacity: glassmorphism.shadowOpacity,
+            shadowRadius: glassmorphism.shadowRadius,
+            elevation: 8,
           }}
         >
           <Heart size={20} color="#fff" style={{ marginRight: 8 }} />
@@ -664,9 +746,14 @@ export default function Home() {
             marginHorizontal: 20,
             marginVertical: 10,
             backgroundColor: colors.accent,
-            borderRadius: 12,
-            padding: 15,
+            borderRadius: 16,
+            padding: 18,
             alignItems: "center",
+            shadowColor: glassmorphism.shadowColor,
+            shadowOffset: glassmorphism.shadowOffset,
+            shadowOpacity: glassmorphism.shadowOpacity,
+            shadowRadius: glassmorphism.shadowRadius,
+            elevation: 8,
           }}
         >
           <Text

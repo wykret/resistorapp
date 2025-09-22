@@ -63,8 +63,29 @@ export const ThemeProvider = ({ children }) => {
       error: isDark ? '#ff6b6b' : '#ff3b30',
     },
     glassmorphism: {
-      backgroundColor: isDark ? 'rgba(42, 42, 42, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-      borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+      // Backgrounds com diferentes níveis de transparência
+      backgroundColor: isDark ? 'rgba(30, 30, 30, 0.85)' : 'rgba(255, 255, 255, 0.85)',
+      backgroundColorLight: isDark ? 'rgba(40, 40, 40, 0.7)' : 'rgba(255, 255, 255, 0.7)',
+      backgroundColorHeavy: isDark ? 'rgba(20, 20, 20, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+      
+      // Bordas com gradientes sutis
+      borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)',
+      borderColorAccent: isDark ? 'rgba(74, 158, 255, 0.3)' : 'rgba(0, 122, 255, 0.2)',
+      
+      // Sombras sofisticadas
+      shadowColor: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.1)',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: isDark ? 0.6 : 0.15,
+      shadowRadius: isDark ? 16 : 12,
+      
+      // Efeitos de gradiente
+      gradientStart: isDark ? 'rgba(30, 30, 30, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+      gradientEnd: isDark ? 'rgba(20, 20, 20, 0.7)' : 'rgba(248, 248, 248, 0.7)',
+      
+      // Blur intensities
+      blurIntensity: 25,
+      blurIntensityLight: 15,
+      blurIntensityHeavy: 35,
     }
   };
 
