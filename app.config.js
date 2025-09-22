@@ -32,10 +32,16 @@ export default {
       favicon: "https://ucarecdn.com/7f831278-f08d-4e11-973c-4a2024b6c5d6/-/format/auto/"
     },
     plugins: [
-      "expo-router"
+      "expo-router",
+      "expo-localization"
     ],
     experiments: {
       typedRoutes: true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f69daee3-0996-4e40-bacf-f612c93b0382"
+      }
     }
   }
 };

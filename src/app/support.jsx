@@ -275,7 +275,7 @@ export default function Support() {
   const paymentOptions = [
     {
       title: t("pixPayment"),
-      address: "YOUR_PIX_KEY_HERE",
+      address: "155f9f73-1e3f-410d-acc6-ef443b45b16f",
       icon: Heart,
       description: t("pixDescription"),
     },

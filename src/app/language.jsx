@@ -241,9 +241,9 @@ export default function Language() {
               fontSize: 14,
               lineHeight: 20,
             }}>
-              The app automatically detects your device language on first launch. 
-              You can change it anytime using this screen. Your preference will be saved 
-              and used for future app sessions.
+              The app automatically detects your device language using multiple methods 
+              including system preferences and locale settings. You can change it anytime 
+              using this screen. Your preference will be saved and used for future app sessions.
             </Text>
           </BlurView>
         </View>

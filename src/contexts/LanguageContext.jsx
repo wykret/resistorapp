@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Platform, NativeModules } from "react-native";
+import * as Localization from 'expo-localization';
 
 const LanguageContext = createContext();
 
@@ -173,19 +174,9 @@ export const LanguageProvider = ({ children }) => {
       if (savedLanguage) {
         setLanguage(savedLanguage);
       } else {
-        // Auto-detect device language - default to English unless Portuguese
-        const deviceLanguage =
-          Platform.OS === "ios"
-            ? NativeModules.SettingsManager?.settings?.AppleLocale || "en"
-            : NativeModules.I18nManager?.localeIdentifier || "en";
-
-        const langCode = deviceLanguage
-          .split("_")[0]
-          .split("-")[0]
-          .toLowerCase();
-        // Only use Portuguese if device language is Portuguese, otherwise default to English
-        const supportedLanguage = langCode === "pt" ? "pt" : "en";
-        setLanguage(supportedLanguage);
+        // Auto-detect device language using multiple methods
+        const detectedLanguage = await detectDeviceLanguage();
+        setLanguage(detectedLanguage);
       }
     } catch (error) {
       console.error("Error loading language:", error);
@@ -193,6 +184,73 @@ export const LanguageProvider = ({ children }) => {
       setLanguage("en");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const detectDeviceLanguage = async () => {
+    try {
+      console.log("Detecting device language...");
+      
+      // Method 1: Use Expo Localization (most reliable)
+      if (Localization.locale) {
+        console.log("Expo Localization locale:", Localization.locale);
+        const langCode = Localization.locale.split("_")[0].split("-")[0].toLowerCase();
+        if (langCode === "pt") {
+          console.log("Detected Portuguese via Expo Localization");
+          return "pt";
+        }
+        if (langCode === "en") {
+          console.log("Detected English via Expo Localization");
+          return "en";
+        }
+      }
+
+      // Method 2: Use device locales array (Expo Localization)
+      if (Localization.locales && Localization.locales.length > 0) {
+        console.log("Expo Localization locales:", Localization.locales);
+        for (const locale of Localization.locales) {
+          const langCode = locale.split("_")[0].split("-")[0].toLowerCase();
+          if (langCode === "pt") {
+            console.log("Detected Portuguese via locales array");
+            return "pt";
+          }
+          if (langCode === "en") {
+            console.log("Detected English via locales array");
+            return "en";
+          }
+        }
+      }
+
+      // Method 3: Fallback to old React Native APIs (for older versions)
+      let deviceLanguage = "en";
+      
+      if (Platform.OS === "ios") {
+        // Try multiple iOS methods
+        deviceLanguage = 
+          NativeModules.SettingsManager?.settings?.AppleLocale ||
+          NativeModules.SettingsManager?.settings?.AppleLanguages?.[0] ||
+          "en";
+        console.log("iOS device language:", deviceLanguage);
+      } else if (Platform.OS === "android") {
+        // Try multiple Android methods
+        deviceLanguage = 
+          NativeModules.I18nManager?.localeIdentifier ||
+          NativeModules.LocaleManager?.localeIdentifier ||
+          "en";
+        console.log("Android device language:", deviceLanguage);
+      }
+
+      const langCode = deviceLanguage.split("_")[0].split("-")[0].toLowerCase();
+      console.log("Extracted language code:", langCode);
+      
+      // Only use Portuguese if device language is Portuguese, otherwise default to English
+      const result = langCode === "pt" ? "pt" : "en";
+      console.log("Final detected language:", result);
+      return result;
+      
+    } catch (error) {
+      console.error("Error detecting device language:", error);
+      return "en";
     }
   };
 
@@ -204,6 +262,7 @@ export const LanguageProvider = ({ children }) => {
       console.error("Error saving language:", error);
     }
   };
+
 
   const t = (key) => {
     return translations[language]?.[key] || translations.en[key] || key;
