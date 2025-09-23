@@ -335,21 +335,6 @@ export default function Home() {
             <TouchableOpacity
               onPress={() => {
                 setShowMenu(false);
-                router.push("/");
-              }}
-              style={{
-                padding: 16,
-                borderBottomWidth: 1,
-                borderBottomColor: glassmorphism.borderColor,
-              }}
-            >
-              <Text style={{ color: colors.text, fontSize: 16 }}>
-                {t("home")}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setShowMenu(false);
                 router.push("/support");
               }}
               style={{
@@ -598,7 +583,7 @@ export default function Home() {
                       color: colors.text,
                       fontSize: 16,
                       fontWeight: "600",
-                      marginBottom: 10,
+                      marginBottom: 4,
                     }}
                   >
                     {bandIndex < bandCount - 2
@@ -606,6 +591,19 @@ export default function Home() {
                       : bandIndex === bandCount - 2
                         ? t("multiplier")
                         : t("tolerance")}
+                  </Text>
+                  <Text
+                    style={{
+                      color: colors.textSecondary,
+                      fontSize: 12,
+                      marginBottom: 10,
+                    }}
+                  >
+                    {bandIndex < bandCount - 2
+                      ? t("digitInstruction")
+                      : bandIndex === bandCount - 2
+                        ? t("multiplierInstruction")
+                        : t("toleranceInstruction")}
                   </Text>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     <View style={{ flexDirection: "row", paddingVertical: 5 }}>

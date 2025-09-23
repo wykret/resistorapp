@@ -55,6 +55,9 @@ const translations = {
     digit: "Digit",
     multiplier: "Multiplier",
     error: "Error",
+    digitInstruction: "Select the color for the digit band.",
+    multiplierInstruction: "Select the color for the multiplier band.",
+    toleranceInstruction: "Select the color for the tolerance band.",
 
     // Support
     supportTitle: "Support the App",
@@ -127,6 +130,9 @@ const translations = {
     digit: "Dígito",
     multiplier: "Multiplicador",
     error: "Erro",
+    digitInstruction: "Selecione a cor para a faixa do dígito.",
+    multiplierInstruction: "Selecione a cor para a faixa do multiplicador.",
+    toleranceInstruction: "Selecione a cor para a faixa da tolerância.",
 
     // Support
     supportTitle: "Apoie o App",
