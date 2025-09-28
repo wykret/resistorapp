@@ -138,6 +138,7 @@ export default function Home() {
   const [selectedBands, setSelectedBands] = useState(Array(5).fill(null));
   const [inputValue, setInputValue] = useState("");
   const [result, setResult] = useState(null);
+  const [currentResistance, setCurrentResistance] = useState(null); // New state for intermediate resistance
   const [showMenu, setShowMenu] = useState(false);
   
   // Animações
@@ -153,6 +154,33 @@ export default function Home() {
   useEffect(() => {
     resetCalculator();
   }, [mode]);
+
+  const calculateIntermediateResistance = useCallback((bands, count) => {
+    let resistance = null;
+    if (count === 4) {
+      const [digit1, digit2, multiplier] = bands;
+      if (digit1 && digit2 && multiplier) {
+        const value1 = RESISTOR_COLORS[digit1]?.value;
+        const value2 = RESISTOR_COLORS[digit2]?.value;
+        const mult = RESISTOR_COLORS[multiplier]?.multiplier;
+        if (value1 !== null && value2 !== null && mult !== null) {
+          resistance = (value1 * 10 + value2) * mult;
+        }
+      }
+    } else if (count === 5) {
+      const [digit1, digit2, digit3, multiplier] = bands;
+      if (digit1 && digit2 && digit3 && multiplier) {
+        const value1 = RESISTOR_COLORS[digit1]?.value;
+        const value2 = RESISTOR_COLORS[digit2]?.value;
+        const value3 = RESISTOR_COLORS[digit3]?.value;
+        const mult = RESISTOR_COLORS[multiplier]?.multiplier;
+        if (value1 !== null && value2 !== null && value3 !== null && mult !== null) {
+          resistance = (value1 * 100 + value2 * 10 + value3) * mult;
+        }
+      }
+    }
+    return resistance;
+  }, []);
 
   // Animações do menu
   useEffect(() => {
@@ -177,14 +205,20 @@ export default function Home() {
       newBands[bandIndex] = color;
       setSelectedBands(newBands);
 
+      // Calculate intermediate resistance
+      const intermediateResistance = calculateIntermediateResistance(newBands, bandCount);
+      setCurrentResistance(intermediateResistance);
+
       // Auto-calculate when all required bands are selected
       const requiredBands = newBands.slice(0, bandCount);
       if (requiredBands.every((band) => band !== null)) {
         const calculation = calculateResistance(requiredBands);
         setResult(calculation);
+      } else {
+        setResult(null); // Clear full result if not all bands are selected
       }
     },
-    [selectedBands, bandCount],
+    [selectedBands, bandCount, calculateIntermediateResistance],
   );
 
   const handleValueToColor = useCallback(() => {
@@ -211,6 +245,7 @@ export default function Home() {
     setSelectedBands(Array(5).fill(null));
     setInputValue("");
     setResult(null);
+    setCurrentResistance(null); // Clear intermediate resistance
   }, []);
 
   const getAvailableColors = (bandIndex) => {
@@ -626,7 +661,7 @@ export default function Home() {
         )}
 
         {/* Results */}
-        {result && (
+        {(result || currentResistance) && (
           <View
             style={{
               marginHorizontal: 20,
@@ -670,6 +705,7 @@ export default function Home() {
                   }}
                 >
                   {t("resistance")}
+                  {!result && currentResistance && ` (${t("approximate")})`}
                 </Text>
                 <Text
                   style={{
@@ -678,30 +714,32 @@ export default function Home() {
                     fontWeight: "bold",
                   }}
                 >
-                  {formatResistance(result.resistance)}
+                  {formatResistance(result ? result.resistance : currentResistance)}
                 </Text>
               </View>
 
-              <View style={{ marginBottom: 10 }}>
-                <Text
-                  style={{
-                    color: colors.textSecondary,
-                    fontSize: 14,
-                    marginBottom: 5,
-                  }}
-                >
-                  {t("tolerance")}
-                </Text>
-                <Text
-                  style={{
-                    color: colors.text,
-                    fontSize: 16,
-                    fontWeight: "600",
-                  }}
-                >
-                  ±{result.tolerance}%
-                </Text>
-              </View>
+              {result && (
+                <View style={{ marginBottom: 10 }}>
+                  <Text
+                    style={{
+                      color: colors.textSecondary,
+                      fontSize: 14,
+                      marginBottom: 5,
+                    }}
+                  >
+                    {t("tolerance")}
+                  </Text>
+                  <Text
+                    style={{
+                      color: colors.text,
+                      fontSize: 16,
+                      fontWeight: "600",
+                    }}
+                  >
+                    ±{result.tolerance}%
+                  </Text>
+                </View>
+              )}
             </BlurView>
           </View>
         )}

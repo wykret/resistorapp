@@ -282,14 +282,14 @@ export default function Support() {
     {
       title: t("btcLightning"),
       address:
-        "lno1pgqppmsrse80qf0aara4slvcjxrvu6j2rp5ftmjy4yntlsmsutpkvkt6878sx6vp93lfhmtm9ajrgj2f3r3ln4gs342ld0f6sjsjmhkyt2qukntcqgp2n3jtqvgagevyqumxyrd5y95fdg8rm678fxd7cxe2y3nemrt27ngqxdu5cqxwrs7ewqfnthhwp4kgtndv2lu95n384lzhkv7ny47sqcw7s3gvmqq8cw9wrapehhvwpze7mhqqs3pq9ay5z4qu4kwh6h0c82xd9vnnjf2felussnja4r4gpe0ukngzygqxqqef74lme4m7w80h84jdmwrmtuqrxea5m43necnzvedamh0f0w4x8dwywg6srt3swchmew8xjc3whuervyxq",
+        "bct123@bipa.app",
       icon: Bitcoin,
       description: t("lightningDescription"),
     },
     {
       title: t("btcOnChain"),
       address:
-        "bitcoin:?lno=lno1pgqppmsrse80qf0aara4slvcjxrvu6j2rp5ftmjy4yntlsmsutpkvkt6878sx6vp93lfhmtm9ajrgj2f3r3ln4gs342ld0f6sjsjmhkyt2qukntcqgp2n3jtqvgagevyqumxyrd5y95fdg8rm678fxd7cxe2y3nemrt27ngqxdu5cqxwrs7ewqfnthhwp4kgtndv2lu95n384lzhkv7ny47sqcw7s3gvmqq8cw9wrapehhvwpze7mhqqs3pq9ay5z4qu4kwh6h0c82xd9vnnjf2felussnja4r4gpe0ukngzygqxqqef74lme4m7w80h84jdmwrmtuqrxea5m43necnzvedamh0f0w4x8dwywg6srt3swchmew8xjc3whuervyxq",
+        "bc1qvzfjzavexfvt4q0w4350ny5gxsx0ggxw7s2sn0",
       icon: Bitcoin,
       description: t("onChainDescription"),
     },
