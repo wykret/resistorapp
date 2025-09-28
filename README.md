@@ -14,7 +14,7 @@ Baixe em [releases](https://github.com/wykret/resistorapp/releases).
 
 ### ⚡ Funcionalidades
 - Valor → cores / cores → valor
-- 4, 5 e 6 faixas
+- 4 e 5 cores
 - Português / Inglês
 - Mobile-friendly
 
@@ -35,7 +35,7 @@ Download at [releases](https://github.com/wykret/resistorapp/releases).
 
 ### ⚡ Features
 - Value → colors / colors → value
-- 4, 5, 6 bands
+- 4 and 5 colors
 - Portuguese / English
 - Mobile-friendly
 
