@@ -211,42 +211,7 @@ export default function Language() {
           ))}
         </View>
 
-        {/* Info Section */}
-        <View style={{
-          marginHorizontal: 20,
-          marginVertical: 30,
-        }}>
-          <BlurView
-            intensity={20}
-            style={{
-              borderRadius: 16,
-              overflow: 'hidden',
-              backgroundColor: glassmorphism.backgroundColor,
-              borderWidth: 1,
-              borderColor: glassmorphism.borderColor,
-              padding: 25,
-            }}
-          >
-            <Text style={{
-              color: colors.text,
-              fontSize: 16,
-              fontWeight: 'bold',
-              marginBottom: 10,
-            }}>
-              Auto-Detection
-            </Text>
-            
-            <Text style={{
-              color: colors.textSecondary,
-              fontSize: 14,
-              lineHeight: 20,
-            }}>
-              The app automatically detects your device language using multiple methods 
-              including system preferences and locale settings. You can change it anytime 
-              using this screen. Your preference will be saved and used for future app sessions.
-            </Text>
-          </BlurView>
-        </View>
+
       </ScrollView>
     </View>
   );

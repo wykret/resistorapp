@@ -39,8 +39,8 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LanguageProvider>
-        <ThemeProvider>
+      <ThemeProvider>
+        <LanguageProvider>
           <GestureHandlerRootView style={{ flex: 1 }}>
             <Stack screenOptions={{ headerShown: false }}>
               <Stack.Screen name="index" />
@@ -48,8 +48,8 @@ export default function RootLayout() {
               <Stack.Screen name="language" />
             </Stack>
           </GestureHandlerRootView>
-        </ThemeProvider>
-      </LanguageProvider>
+        </LanguageProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
