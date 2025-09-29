@@ -26,6 +26,11 @@ Envie Bitcoin(on-chain): `bc1qvzfjzavexfvt4q0w4350ny5gxsx0ggxw7s2sn0`
 
 Envie Bitcoin(Lightning): `bct123@bipa.app`
 
+Envie via Livepix: `wykret@livepix.gg`
+
+### 📄 Licença
+Este projeto está licenciado sob a GNU General Public License v2.0 - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
 ---
 
 ## 🇬🇧 English
@@ -49,3 +54,6 @@ Download at [releases](https://github.com/wykret/resistorapp/releases).
 Send Bitcoin(on-chain): `bc1qvzfjzavexfvt4q0w4350ny5gxsx0ggxw7s2sn0`
 
 Send Bitcoin(Lightning): `bct123@bipa.app`
+
+### 📄 License
+This project is licensed under the GNU General Public License v2.0 - see the [LICENSE](LICENSE) file for details.
