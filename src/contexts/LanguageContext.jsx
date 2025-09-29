@@ -178,18 +178,8 @@ export const LanguageProvider = ({ children }) => {
 
   const loadLanguage = async () => {
     try {
-      const savedLanguage = await AsyncStorage.getItem("language");
-      const hasLaunchedBefore = await AsyncStorage.getItem("hasLaunchedBefore");
-
-      if (savedLanguage) {
-        setLanguage(savedLanguage);
-      }
-
-      // Show language selector only on first launch
-      if (!hasLaunchedBefore) {
-        setShowLanguageSelector(true);
-      }
-
+      // No auto language detection - always ask user to select
+      setShowLanguageSelector(true);
       setIsLoading(false);
     } catch (error) {
       console.error("Error loading language:", error);
