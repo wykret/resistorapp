@@ -23,7 +23,7 @@ Baixe em [releases](https://github.com/wykret/resistorapp/releases).
 
 ### 💜 Apoie
 
-Apoie via Livepix: `wykret@livepix.gg`
+Apoie via Livepix: `https://livepix.gg/wykret`
 
 Envie Bitcoin(on-chain): `bc1qvzfjzavexfvt4q0w4350ny5gxsx0ggxw7s2sn0`
 
