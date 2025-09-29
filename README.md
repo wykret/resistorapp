@@ -10,7 +10,7 @@
 Aplicativo para identificar valores de resistores pelas cores.
 
 ### 🌐 Web App
-Acesse a versão web em: [wykret.github.io/resistorapp](https://wykret.github.io/resistorapp/)
+Acesse a versão web em: [wykret.github.io/resistorapp](https://wykret.github.io/resistorapp/) (ainda está dando umas travadas, farei melhorias no código depois.)
 
 ### 📲 Instalação
 Baixe em [releases](https://github.com/wykret/resistorapp/releases).
@@ -34,7 +34,7 @@ Envie Bitcoin(Lightning): `bct123@bipa.app`
 App to identify resistor values from color bands.
 
 ### 🌐 Web App
-Access the web version at: [wykret.github.io/resistorapp](https://wykret.github.io/resistorapp/)
+Access the web version at: [wykret.github.io/resistorapp](https://wykret.github.io/resistorapp/) (it's still a bit laggy, will change some things on the code later.)
 
 ### 📲 Installation
 Download at [releases](https://github.com/wykret/resistorapp/releases).
