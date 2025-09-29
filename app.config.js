@@ -1,9 +1,10 @@
 export default {
   expo: {
     name: "Resistor",
+    slug: "resistor",
     version: "1.0.1",
     orientation: "portrait",
-    icon: "./assets/images/icon.png",
+    icon: "https://ucarecdn.com/7f831278-f08d-4e11-973c-4a2024b6c5d6/-/format/auto/",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     scheme: "resistor",
@@ -28,11 +29,7 @@ export default {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff"
       },
-      package: "com.resistor.resistor",
-      permissions: [
-        "android.permission.RECORD_AUDIO",
-        "android.permission.MODIFY_AUDIO_SETTINGS"
-      ]
+      package: "com.resistor.resistor"
     },
     web: {
       bundler: "metro",
@@ -53,7 +50,6 @@ export default {
           "resizeMode": "contain"
         }
       ],
-      "expo-audio",
       [
         "expo-build-properties",
         {
@@ -61,8 +57,7 @@ export default {
             "useFrameworks": "static"
           }
         }
-      ],
-      "expo-video"
+      ]
     ],
     experiments: {
       typedRoutes: true
@@ -73,11 +68,9 @@ export default {
         sitemap: false
       },
       eas: {
-        projectId: "06a63012-fc40-4e3c-9d34-856f4020842d"
+        projectId: "f69daee3-0996-4e40-bacf-f612c93b0382"
       }
     },
-    runtimeVersion: {
-      policy: "appVersion"
-    }
+    runtimeVersion: "1.0.1"
   }
 };
