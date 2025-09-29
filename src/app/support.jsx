@@ -275,7 +275,7 @@ export default function Support() {
   const paymentOptions = [
     {
       title: t("pixPayment"),
-      address: "155f9f73-1e3f-410d-acc6-ef443b45b16f",
+      address: "https://livepix.gg/wykret",
       icon: Heart,
       description: t("pixDescription"),
     },
