@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Platform, NativeModules } from "react-native";
-import * as Localization from 'expo-localization';
+import { View, Text, TouchableOpacity } from "react-native";
 
 const LanguageContext = createContext();
 
@@ -88,6 +87,7 @@ const translations = {
     // Validation
     invalidValue: "Invalid resistance value",
     valueRequired: "Please enter a value",
+    approximate: "approximate",
   },
   pt: {
     // Navigation
@@ -163,12 +163,14 @@ const translations = {
     // Validation
     invalidValue: "Valor de resistência inválido",
     valueRequired: "Por favor, digite um valor",
+    approximate: "aproximada",
   },
 };
 
 export const LanguageProvider = ({ children }) => {
   const [language, setLanguage] = useState("en");
   const [isLoading, setIsLoading] = useState(true);
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
   useEffect(() => {
     loadLanguage();
@@ -177,86 +179,23 @@ export const LanguageProvider = ({ children }) => {
   const loadLanguage = async () => {
     try {
       const savedLanguage = await AsyncStorage.getItem("language");
+      const hasLaunchedBefore = await AsyncStorage.getItem("hasLaunchedBefore");
+
       if (savedLanguage) {
         setLanguage(savedLanguage);
-      } else {
-        // Auto-detect device language using multiple methods
-        const detectedLanguage = await detectDeviceLanguage();
-        setLanguage(detectedLanguage);
       }
+
+      // Show language selector only on first launch
+      if (!hasLaunchedBefore) {
+        setShowLanguageSelector(true);
+      }
+
+      setIsLoading(false);
     } catch (error) {
       console.error("Error loading language:", error);
       // Fallback to English on error
       setLanguage("en");
-    } finally {
       setIsLoading(false);
-    }
-  };
-
-  const detectDeviceLanguage = async () => {
-    try {
-      console.log("Detecting device language...");
-      
-      // Method 1: Use Expo Localization (most reliable)
-      if (Localization.locale) {
-        console.log("Expo Localization locale:", Localization.locale);
-        const langCode = Localization.locale.split("_")[0].split("-")[0].toLowerCase();
-        if (langCode === "pt") {
-          console.log("Detected Portuguese via Expo Localization");
-          return "pt";
-        }
-        if (langCode === "en") {
-          console.log("Detected English via Expo Localization");
-          return "en";
-        }
-      }
-
-      // Method 2: Use device locales array (Expo Localization)
-      if (Localization.locales && Localization.locales.length > 0) {
-        console.log("Expo Localization locales:", Localization.locales);
-        for (const locale of Localization.locales) {
-          const langCode = locale.split("_")[0].split("-")[0].toLowerCase();
-          if (langCode === "pt") {
-            console.log("Detected Portuguese via locales array");
-            return "pt";
-          }
-          if (langCode === "en") {
-            console.log("Detected English via locales array");
-            return "en";
-          }
-        }
-      }
-
-      // Method 3: Fallback to old React Native APIs (for older versions)
-      let deviceLanguage = "en";
-      
-      if (Platform.OS === "ios") {
-        // Try multiple iOS methods
-        deviceLanguage = 
-          NativeModules.SettingsManager?.settings?.AppleLocale ||
-          NativeModules.SettingsManager?.settings?.AppleLanguages?.[0] ||
-          "en";
-        console.log("iOS device language:", deviceLanguage);
-      } else if (Platform.OS === "android") {
-        // Try multiple Android methods
-        deviceLanguage = 
-          NativeModules.I18nManager?.localeIdentifier ||
-          NativeModules.LocaleManager?.localeIdentifier ||
-          "en";
-        console.log("Android device language:", deviceLanguage);
-      }
-
-      const langCode = deviceLanguage.split("_")[0].split("-")[0].toLowerCase();
-      console.log("Extracted language code:", langCode);
-      
-      // Only use Portuguese if device language is Portuguese, otherwise default to English
-      const result = langCode === "pt" ? "pt" : "en";
-      console.log("Final detected language:", result);
-      return result;
-      
-    } catch (error) {
-      console.error("Error detecting device language:", error);
-      return "en";
     }
   };
 
@@ -269,9 +208,109 @@ export const LanguageProvider = ({ children }) => {
     }
   };
 
+  const selectLanguage = async (selectedLanguage) => {
+    setLanguage(selectedLanguage);
+    setShowLanguageSelector(false);
+    try {
+      await AsyncStorage.setItem("language", selectedLanguage);
+      await AsyncStorage.setItem("hasLaunchedBefore", "true");
+    } catch (error) {
+      console.error("Error saving language selection:", error);
+    }
+  };
 
   const t = (key) => {
     return translations[language]?.[key] || translations.en[key] || key;
+  };
+
+  // Language Selector Component
+  const LanguageSelector = () => {
+    if (!showLanguageSelector) return null;
+
+    return (
+      <View style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 9999,
+      }}>
+        <View style={{
+          backgroundColor: '#fff',
+          borderRadius: 20,
+          padding: 30,
+          margin: 20,
+          alignItems: 'center',
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: 10 },
+          shadowOpacity: 0.3,
+          shadowRadius: 20,
+          elevation: 10,
+          minWidth: 280,
+        }}>
+          <Text style={{
+            fontSize: 24,
+            fontWeight: 'bold',
+            marginBottom: 10,
+            textAlign: 'center',
+            color: '#333',
+          }}>
+            Welcome!
+          </Text>
+          <Text style={{
+            fontSize: 16,
+            marginBottom: 30,
+            textAlign: 'center',
+            color: '#666',
+          }}>
+            Please select your preferred language
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => selectLanguage('en')}
+            style={{
+              backgroundColor: '#007AFF',
+              borderRadius: 12,
+              padding: 15,
+              marginBottom: 15,
+              minWidth: 200,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{
+              color: '#fff',
+              fontSize: 18,
+              fontWeight: '600',
+            }}>
+              English
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => selectLanguage('pt')}
+            style={{
+              backgroundColor: '#28a745',
+              borderRadius: 12,
+              padding: 15,
+              minWidth: 200,
+              alignItems: 'center',
+            }}
+          >
+            <Text style={{
+              color: '#fff',
+              fontSize: 18,
+              fontWeight: '600',
+            }}>
+              Português
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
   };
 
   if (isLoading) {
@@ -279,7 +318,8 @@ export const LanguageProvider = ({ children }) => {
   }
 
   return (
-    <LanguageContext.Provider value={{ language, changeLanguage, t }}>
+    <LanguageContext.Provider value={{ language, changeLanguage, t, showLanguageSelector }}>
+      <LanguageSelector />
       {children}
     </LanguageContext.Provider>
   );
