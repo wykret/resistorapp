@@ -32,9 +32,12 @@ export default {
     web: {
       bundler: "metro",
       favicon: "./assets/images/favicon.png",
-      output: {
-        publicPath: "/resistorapp/", // 👈 caminho certo pro GitHub Pages
-      }
+      publicPath: "/resistorapp/_expo/static/",
+      scope: "/resistorapp/"
+    },
+    experiments: {
+      baseUrl: "/resistorapp",
+      typedRoutes: true
     },
     plugins: [
       ["expo-router", { sitemap: false }],
@@ -47,9 +50,6 @@ export default {
         ios: { useFrameworks: "static" }
       }]
     ],
-    experiments: {
-      typedRoutes: true
-    },
     extra: {
       router: { origin: false, sitemap: false },
       eas: { projectId: "f69daee3-0996-4e40-bacf-f612c93b0382" }
@@ -57,4 +57,3 @@ export default {
     runtimeVersion: "1.0.1"
   }
 };
-

@@ -23,7 +23,7 @@ jobs:
         run: npm ci
 
       - name: Build web app
-        run: npx expo build:web
+        run: npx expo export --platform web
 
       - name: Add base href for subdirectory deployment
         run: |
@@ -39,3 +39,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
           publish_branch: gh-pages
+          nojekyll: true
