@@ -9,6 +9,9 @@ const {
   VIRTUAL_ROOT_UNRESOLVED,
 } = require('./__create/handle-resolve-request-error');
 
+// Ensure virtual directories exist
+fs.mkdirSync(VIRTUAL_ROOT_UNRESOLVED, { recursive: true });
+
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 
@@ -48,7 +51,7 @@ const NATIVE_ALIASES = {
 const SHARED_ALIASES = {
   'expo-image': path.resolve(__dirname, './polyfills/shared/expo-image.tsx'),
 };
-fs.mkdirSync(VIRTUAL_ROOT_UNRESOLVED, { recursive: true });
+
 config.watchFolders = [...config.watchFolders, VIRTUAL_ROOT, VIRTUAL_ROOT_UNRESOLVED];
 
 // Add web-specific alias configuration through resolveRequest
@@ -94,7 +97,20 @@ config.cacheStores = () => [
   }),
 ];
 config.resetCache = false;
-config.fileMapCacheDirectory = cacheDir;
+
+// Web-specific optimizations
+config.transformer = {
+  ...config.transformer,
+  getTransformOptions: async () => ({
+    transform: {
+      experimentalImportSupport: false,
+      inlineRequires: true,
+    },
+  }),
+};
+
+// Improve web build compatibility
+config.resolver.sourceExts = [...config.resolver.sourceExts, 'web.js', 'web.ts', 'web.tsx'];
 config.reporter = {
   ...config.reporter,
   update: (event) => {

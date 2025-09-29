@@ -2,38 +2,40 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches:
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-    - name: Install system dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Build web app
+        run: npx expo build:web
 
-    - name: Build for Web
-      run: npx expo export --platform web
+      - name: Add base href for subdirectory deployment
+        run: |
+          # Add base href to index.html for GitHub Pages subdirectory
+          sed -i 's|<head>|<head><base href="/resistorapp/">|' dist/index.html
 
-    - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/master'
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+      - name: Copy index.html to 404.html for SPA routing
+        run: cp dist/index.html dist/404.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages

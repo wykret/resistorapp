@@ -1,9 +1,14 @@
+// Import React hooks and functions for creating context and managing state
 import React, { createContext, useContext, useState, useEffect } from "react";
+// Import AsyncStorage for persistent storage of language preference
 import AsyncStorage from "@react-native-async-storage/async-storage";
+// Import React Native components for UI elements
 import { View, Text, TouchableOpacity } from "react-native";
 
+// Create a React context for sharing language state throughout the app
 const LanguageContext = createContext();
 
+// Custom hook to use the language context - throws error if used outside provider
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (!context) {
@@ -12,14 +17,15 @@ export const useLanguage = () => {
   return context;
 };
 
+// Translation object containing all text strings for English and Portuguese
 const translations = {
   en: {
-    // Navigation
+    // Navigation section translations
     home: "Home",
     support: "Support the App",
     language: "Language",
 
-    // Main App
+    // Main App section translations
     resistor: "Resistor",
     resistorCalculator: "Resistor Calculator",
     colorToValue: "Color to Value",
@@ -28,7 +34,7 @@ const translations = {
     fourBands: "4 Bands",
     fiveBands: "5 Bands",
 
-    // Colors
+    // Colors section translations
     black: "Black",
     brown: "Brown",
     red: "Red",
@@ -43,7 +49,7 @@ const translations = {
     silver: "Silver",
     none: "None",
 
-    // Results
+    // Results section translations
     resistance: "Resistance",
     tolerance: "Tolerance",
     tempCoefficient: "Temperature Coefficient",
@@ -58,7 +64,7 @@ const translations = {
     multiplierInstruction: "Select the color for the multiplier band.",
     toleranceInstruction: "Select the color for the tolerance band.",
 
-    // Support
+    // Support section translations
     supportTitle: "Support the App",
     supportDescription: "Help us keep this app free and updated",
     pixPayment: "PIX Payment",
@@ -74,28 +80,28 @@ const translations = {
     thankYouMessage:
       "Your contribution helps keep this app free and always updated. Every donation, no matter how small, makes a difference!",
 
-    // Language
+    // Language section translations
     selectLanguage: "Select Language",
     english: "English",
     portuguese: "Português",
 
-    // Units
+    // Units section translations
     ohms: "Ω",
     kiloOhms: "kΩ",
     megaOhms: "MΩ",
 
-    // Validation
+    // Validation section translations
     invalidValue: "Invalid resistance value",
     valueRequired: "Please enter a value",
     approximate: "approximate",
   },
   pt: {
-    // Navigation
+    // Navigation section translations (Portuguese)
     home: "Início",
     support: "Apoie o App",
     language: "Idioma",
 
-    // Main App
+    // Main App section translations (Portuguese)
     resistor: "Resistor",
     resistorCalculator: "Calculadora de Resistor",
     colorToValue: "Cor para Valor",
@@ -104,7 +110,7 @@ const translations = {
     fourBands: "4 Faixas",
     fiveBands: "5 Faixas",
 
-    // Colors
+    // Colors section translations (Portuguese)
     black: "Preto",
     brown: "Marrom",
     red: "Vermelho",
@@ -119,7 +125,7 @@ const translations = {
     silver: "Prata",
     none: "Nenhum",
 
-    // Results
+    // Results section translations (Portuguese)
     resistance: "Resistência",
     tolerance: "Tolerância",
     tempCoefficient: "Coeficiente de Temperatura",
@@ -134,7 +140,7 @@ const translations = {
     multiplierInstruction: "Selecione a cor para a faixa do multiplicador.",
     toleranceInstruction: "Selecione a cor para a faixa da tolerância.",
 
-    // Support
+    // Support section translations (Portuguese)
     supportTitle: "Apoie o App",
     supportDescription: "Ajude-nos a manter este app gratuito e atualizado",
     pixPayment: "Pagamento PIX",
@@ -150,32 +156,38 @@ const translations = {
     thankYouMessage:
       "Sua contribuição ajuda a manter este app gratuito e atualizado. Cada doação, independente do tamanho, faz toda diferença!",
 
-    // Language
+    // Language section translations (Portuguese)
     selectLanguage: "Selecionar Idioma",
     english: "English",
     portuguese: "Português",
 
-    // Units
+    // Units section translations (Portuguese)
     ohms: "Ω",
     kiloOhms: "kΩ",
     megaOhms: "MΩ",
 
-    // Validation
+    // Validation section translations (Portuguese)
     invalidValue: "Valor de resistência inválido",
     valueRequired: "Por favor, digite um valor",
     approximate: "aproximada",
   },
 };
 
+// Main language provider component that manages language state and selection
 export const LanguageProvider = ({ children }) => {
+  // State to track current language (defaults to English)
   const [language, setLanguage] = useState("en");
+  // State to track if language is still loading
   const [isLoading, setIsLoading] = useState(true);
+  // State to control whether to show the language selector modal
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
+  // Effect to load language preference when component mounts
   useEffect(() => {
     loadLanguage();
   }, []);
 
+  // Async function to load language preference (always shows selector)
   const loadLanguage = async () => {
     try {
       // No auto language detection - always ask user to select
@@ -189,6 +201,7 @@ export const LanguageProvider = ({ children }) => {
     }
   };
 
+  // Function to change language and save to storage
   const changeLanguage = async (newLanguage) => {
     setLanguage(newLanguage);
     try {
@@ -198,6 +211,7 @@ export const LanguageProvider = ({ children }) => {
     }
   };
 
+  // Function to handle language selection and hide selector
   const selectLanguage = async (selectedLanguage) => {
     setLanguage(selectedLanguage);
     setShowLanguageSelector(false);
@@ -209,11 +223,12 @@ export const LanguageProvider = ({ children }) => {
     }
   };
 
+  // Translation function to get text in current language with fallbacks
   const t = (key) => {
     return translations[language]?.[key] || translations.en[key] || key;
   };
 
-  // Language Selector Component
+  // Language Selector Component - shows modal for language selection
   const LanguageSelector = () => {
     if (!showLanguageSelector) return null;
 
@@ -303,10 +318,12 @@ export const LanguageProvider = ({ children }) => {
     );
   };
 
+  // Show nothing while language is loading to prevent flash
   if (isLoading) {
     return null;
   }
 
+  // Provide language context to child components
   return (
     <LanguageContext.Provider value={{ language, changeLanguage, t, showLanguageSelector }}>
       <LanguageSelector />

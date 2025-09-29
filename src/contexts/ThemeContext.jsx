@@ -1,9 +1,14 @@
+// Import React hooks and functions for creating context and managing state
 import React, { createContext, useContext, useState, useEffect } from 'react';
+// Import AsyncStorage for persistent storage of theme preference
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// Import Appearance API to detect system theme preference
 import { Appearance } from 'react-native';
 
+// Create a React context for sharing theme state throughout the app
 const ThemeContext = createContext();
 
+// Custom hook to use the theme context - throws error if used outside provider
 export const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
@@ -12,31 +17,51 @@ export const useTheme = () => {
   return context;
 };
 
+// Main theme provider component that manages theme state
 export const ThemeProvider = ({ children }) => {
+  // State to track if dark mode is active
   const [isDark, setIsDark] = useState(false);
+  // State to track if theme is still loading
   const [isLoading, setIsLoading] = useState(true);
 
+  // Effect to load theme preference when component mounts
   useEffect(() => {
     loadTheme();
   }, []);
 
+  // Async function to load saved theme or detect system preference
   const loadTheme = async () => {
     try {
-      const savedTheme = await AsyncStorage.getItem('theme');
+      // Try to get saved theme from storage
+      let savedTheme = null;
+      try {
+        savedTheme = await AsyncStorage.getItem('theme');
+      } catch (storageError) {
+        console.warn('AsyncStorage not available, using system theme:', storageError);
+      }
+
+      // If saved theme exists, use it
       if (savedTheme !== null) {
         setIsDark(savedTheme === 'dark');
       } else {
-        // Auto-detect system theme
-        const colorScheme = Appearance.getColorScheme();
+        // Auto-detect system theme if no saved preference
+        let colorScheme = 'light';
+        try {
+          colorScheme = Appearance.getColorScheme() || 'light';
+        } catch (appearanceError) {
+          console.warn('Appearance API not available:', appearanceError);
+        }
         setIsDark(colorScheme === 'dark');
       }
     } catch (error) {
       console.error('Error loading theme:', error);
+      setIsDark(false); // Fallback to light theme
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Function to toggle between light and dark themes
   const toggleTheme = async () => {
     const newTheme = !isDark;
     setIsDark(newTheme);
@@ -47,8 +72,11 @@ export const ThemeProvider = ({ children }) => {
     }
   };
 
+  // Theme object containing colors and glassmorphism styles
   const theme = {
+    // Current theme state
     isDark,
+    // Color palette that adapts to light/dark mode
     colors: {
       background: isDark ? '#000000' : '#ffffff',
       surface: isDark ? '#1a1a1a' : '#f5f5f5',
@@ -62,37 +90,40 @@ export const ThemeProvider = ({ children }) => {
       warning: isDark ? '#ffe66d' : '#ff9500',
       error: isDark ? '#ff6b6b' : '#ff3b30',
     },
+    // Glassmorphism styles for modern glass-like UI effects
     glassmorphism: {
-      // Backgrounds com diferentes níveis de transparência
+      // Backgrounds with different transparency levels
       backgroundColor: isDark ? 'rgba(30, 30, 30, 0.85)' : 'rgba(255, 255, 255, 0.85)',
       backgroundColorLight: isDark ? 'rgba(40, 40, 40, 0.7)' : 'rgba(255, 255, 255, 0.7)',
       backgroundColorHeavy: isDark ? 'rgba(20, 20, 20, 0.95)' : 'rgba(255, 255, 255, 0.95)',
-      
-      // Bordas com gradientes sutis
+
+      // Borders with subtle gradients
       borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)',
       borderColorAccent: isDark ? 'rgba(74, 158, 255, 0.3)' : 'rgba(0, 122, 255, 0.2)',
-      
-      // Sombras sofisticadas
+
+      // Sophisticated shadows
       shadowColor: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.1)',
       shadowOffset: { width: 0, height: 8 },
       shadowOpacity: isDark ? 0.6 : 0.15,
       shadowRadius: isDark ? 16 : 12,
-      
-      // Efeitos de gradiente
+
+      // Gradient effects
       gradientStart: isDark ? 'rgba(30, 30, 30, 0.9)' : 'rgba(255, 255, 255, 0.9)',
       gradientEnd: isDark ? 'rgba(20, 20, 20, 0.7)' : 'rgba(248, 248, 248, 0.7)',
-      
-      // Blur intensities
+
+      // Blur intensities for backdrop effects
       blurIntensity: 25,
       blurIntensityLight: 15,
       blurIntensityHeavy: 35,
     }
   };
 
+  // Show nothing while theme is loading to prevent flash
   if (isLoading) {
     return null;
   }
 
+  // Provide theme context to child components
   return (
     <ThemeContext.Provider value={{ ...theme, toggleTheme }}>
       {children}
