@@ -107,6 +107,16 @@ config.transformer = {
       inlineRequires: true,
     },
   }),
+  minifierConfig: {
+    compress: {
+      drop_console: true,
+      drop_debugger: true,
+      pure_funcs: ['console.log', 'console.info', 'console.warn'],
+    },
+    mangle: {
+      safari10: true,
+    },
+  },
 };
 
 // Improve web build compatibility

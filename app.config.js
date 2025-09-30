@@ -1,3 +1,5 @@
+import { backgroundColor } from "react-native-calendars/src/style";
+
 export default {
   expo: {
     name: "Resistor",
@@ -18,7 +20,10 @@ export default {
       "**/*",
       "!**/*.webp",
       "!**/*.svg",
-      "!**/node_modules/**/*"
+      "!**/node_modules/**/*",
+      "!**/src/**",
+      "!**/*.test.*",
+      "!**/*.spec.*"
     ],
     ios: {
       supportsTablet: true,
@@ -50,7 +55,8 @@ export default {
       ["expo-router", { sitemap: false }],
       ["expo-splash-screen", {
         image: "./assets/images/splash-icon.png",
-        imageWidth: 200,
+        backgroundColor: "darkgray",
+        imageWidth:200,
         resizeMode: "contain"
       }],
       ["expo-build-properties", {

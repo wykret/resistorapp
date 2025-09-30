@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   Modal,
+  Linking,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -33,6 +34,21 @@ const PaymentOption = ({ title, address, icon: Icon, description }) => {
   const copyToClipboard = async () => {
     await Clipboard.setStringAsync(address);
     Alert.alert(t("addressCopied"));
+  };
+
+  const handleAddressPress = async () => {
+    // Check if address is a URL (starts with http/https)
+    if (address.startsWith('http://') || address.startsWith('https://')) {
+      const supported = await Linking.canOpenURL(address);
+      if (supported) {
+        await Linking.openURL(address);
+      } else {
+        Alert.alert(t("error"), t("cannotOpenUrl"));
+      }
+    } else {
+      // For non-URL addresses, copy to clipboard
+      copyToClipboard();
+    }
   };
 
   return (
@@ -93,7 +109,8 @@ const PaymentOption = ({ title, address, icon: Icon, description }) => {
             </View>
           </View>
 
-          <View
+          <TouchableOpacity
+            onPress={handleAddressPress}
             style={{
               backgroundColor: colors.surface,
               borderRadius: 12,
@@ -103,15 +120,20 @@ const PaymentOption = ({ title, address, icon: Icon, description }) => {
           >
             <Text
               style={{
-                color: colors.text,
+                color: address.startsWith('http://') || address.startsWith('https://')
+                  ? colors.primary
+                  : colors.text,
                 fontSize: 12,
                 fontFamily: "monospace",
                 lineHeight: 18,
+                textDecorationLine: (address.startsWith('http://') || address.startsWith('https://'))
+                  ? 'underline'
+                  : 'none',
               }}
             >
               {address}
             </Text>
-          </View>
+          </TouchableOpacity>
 
           <View style={{ flexDirection: "row", gap: 10 }}>
             <TouchableOpacity
