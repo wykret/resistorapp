@@ -14,7 +14,12 @@ export default {
       resizeMode: "contain",
       backgroundColor: "#2E7D32"
     },
-    assetBundlePatterns: ["**/*"],
+    assetBundlePatterns: [
+      "**/*",
+      "!**/*.webp",
+      "!**/*.svg",
+      "!**/node_modules/**/*"
+    ],
     ios: {
       supportsTablet: true,
       bundleIdentifier: "com.resistor.resistor",
@@ -27,7 +32,9 @@ export default {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff"
       },
-      package: "com.resistor.resistor"
+      package: "com.resistor.resistor",
+      enableHermes: true,
+      enableProguardInReleaseBuilds: true
     },
     web: {
       bundler: "metro",

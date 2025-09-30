@@ -98,7 +98,7 @@ config.cacheStores = () => [
 ];
 config.resetCache = false;
 
-// Web-specific optimizations
+// Production optimizations
 config.transformer = {
   ...config.transformer,
   getTransformOptions: async () => ({

@@ -2,7 +2,7 @@
   "name": "mobile",
   "main": "index",
   "version": "1.0.1",
-  "homepage":"https://wykret.github.io/resistorapp/",
+  "homepage": "https://wykret.github.io/resistorapp/",
   "scripts": {
     "postinstall": "patch-package",
     "android": "expo run:android",
@@ -11,7 +11,10 @@
     "postbuild:web": "cp dist/index.html dist/404.html && cp dist/index.html dist/200.html",
     "predeploy": "npm run build:web",
     "deploy": "gh-pages -d dist --nojekyll",
-    "test:web": "npx serve dist -p 3000"
+    "test:web": "npx serve dist -p 3000",
+    "build:android": "eas build --platform android --profile production",
+    "build:ios": "eas build --platform ios --profile production",
+    "build:all": "eas build --platform all --profile production"
   },
   "dependencies": {
     "@expo-google-fonts/dev": "^0.4.7",
@@ -24,7 +27,6 @@
     "@react-native-picker/picker": "2.11.1",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
-    "@shopify/react-native-skia": "v2.0.0-next.4",
     "@tanstack/react-query": "^5.72.2",
     "@teovilla/react-native-web-maps": "^0.9.5",
     "@uploadcare/upload-client": "6.14.3",
@@ -32,12 +34,9 @@
     "color2k": "^2.0.3",
     "date-fns": "^4.1.0",
     "expo": "~53.0.23",
-    "expo-audio": "~0.4.9",
-    "expo-av": "~15.1.7",
     "expo-blur": "~14.1.5",
     "expo-build-properties": "~0.14.8",
     "expo-calendar": "~14.1.4",
-    "expo-camera": "~16.1.11",
     "expo-clipboard": "~7.1.5",
     "expo-constants": "~17.1.4",
     "expo-contacts": "~14.2.5",
@@ -61,9 +60,7 @@
     "expo-status-bar": "~2.2.3",
     "expo-symbols": "~0.4.5",
     "expo-system-ui": "~5.0.11",
-    "expo-three": "^2.2.1",
     "expo-updates": "~0.28.17",
-    "expo-video": "~2.2.1",
     "expo-web-browser": "~14.2.0",
     "lodash": "^4.17.21",
     "lucide-react-native": "^0.525.0",
@@ -74,7 +71,6 @@
     "react-native": "0.79.5",
     "react-native-calendars": "https://codeload.github.com/craftworkco/react-native-calendars/tar.gz/ae19e2af74ecdb29d6117ca41fbf41977a10cc23",
     "react-native-gesture-handler": "~2.24.0",
-    "react-native-graph": "^1.1.0",
     "react-native-localize": "^3.5.2",
     "react-native-maps": "1.20.1",
     "react-native-reanimated": "~3.17.4",
@@ -102,12 +98,6 @@
     "patch-package": "^8.0.0",
     "postcss": "8.5.2",
     "typescript": "~5.8.3"
-  },
-  "overrides": {
-    "@shopify/react-native-skia": "v2.0.0-next.4",
-    "react-native-graph": {
-      "@shopify/react-native-skia": "v2.0.0-next.4"
-    }
   },
   "private": true
 }

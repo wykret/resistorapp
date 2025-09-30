@@ -140,6 +140,7 @@ export default function Home() {
   const [result, setResult] = useState(null);
   const [currentResistance, setCurrentResistance] = useState(null); // New state for intermediate resistance
   const [showMenu, setShowMenu] = useState(false);
+  const [selectedTolerance, setSelectedTolerance] = useState("gold"); // Default tolerance for 4-band
   
   // Animações
   const menuAnimation = useRef(new Animated.Value(0)).current;
@@ -154,6 +155,11 @@ export default function Home() {
   useEffect(() => {
     resetCalculator();
   }, [mode]);
+
+  // Update default tolerance when band count changes
+  useEffect(() => {
+    setSelectedTolerance(bandCount === 4 ? "gold" : "brown");
+  }, [bandCount]);
 
   const calculateIntermediateResistance = useCallback((bands, count) => {
     let resistance = null;
@@ -230,16 +236,18 @@ export default function Home() {
 
     const calculation = calculateColors(resistance, bandCount);
     if (calculation) {
-      setSelectedBands([...calculation.bands, null].slice(0, 5));
+      // Use the selected tolerance instead of the calculated one
+      const toleranceValue = RESISTOR_COLORS[selectedTolerance]?.tolerance;
+      setSelectedBands([...calculation.bands.slice(0, bandCount - 1), selectedTolerance].concat(Array(5 - bandCount).fill(null)).slice(0, 5));
       setResult({
         resistance: calculation.resistance,
-        tolerance: calculation.tolerance,
+        tolerance: toleranceValue,
         tempCoefficient: null,
       });
     } else {
       Alert.alert(t("error"), t("invalidValue"));
     }
-  }, [inputValue, bandCount, t]);
+  }, [inputValue, bandCount, t, selectedTolerance]);
 
   const resetCalculator = useCallback(() => {
     setSelectedBands(Array(5).fill(null));
@@ -521,6 +529,90 @@ export default function Home() {
         {/* Resistor Display */}
         <ResistorDisplay bands={selectedBands} bandCount={bandCount} />
 
+        {/* Results - Moved above band selectors */}
+        {(result || currentResistance) && (
+          <View
+            style={{
+              marginHorizontal: 20,
+              marginVertical: 20,
+            }}
+          >
+            <BlurView
+              intensity={glassmorphism.blurIntensity}
+              style={{
+                borderRadius: 20,
+                overflow: "hidden",
+                backgroundColor: glassmorphism.backgroundColor,
+                borderWidth: 1,
+                borderColor: glassmorphism.borderColor,
+                padding: 24,
+                shadowColor: glassmorphism.shadowColor,
+                shadowOffset: glassmorphism.shadowOffset,
+                shadowOpacity: glassmorphism.shadowOpacity,
+                shadowRadius: glassmorphism.shadowRadius,
+                elevation: 8,
+              }}
+            >
+              <Text
+                style={{
+                  color: colors.text,
+                  fontSize: 18,
+                  fontWeight: "bold",
+                  marginBottom: 15,
+                  textAlign: "center",
+                }}
+              >
+                {t("results")}
+              </Text>
+
+              <View style={{ marginBottom: 10 }}>
+                <Text
+                  style={{
+                    color: colors.textSecondary,
+                    fontSize: 14,
+                    marginBottom: 5,
+                  }}
+                >
+                  {t("resistance")}
+                  {!result && currentResistance && ` (${t("approximate")})`}
+                </Text>
+                <Text
+                  style={{
+                    color: colors.text,
+                    fontSize: 20,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {formatResistance(result ? result.resistance : currentResistance)}
+                </Text>
+              </View>
+
+              {result && (
+                <View style={{ marginBottom: 10 }}>
+                  <Text
+                    style={{
+                      color: colors.textSecondary,
+                      fontSize: 14,
+                      marginBottom: 5,
+                    }}
+                  >
+                    {t("tolerance")}
+                  </Text>
+                  <Text
+                    style={{
+                      color: colors.text,
+                      fontSize: 16,
+                      fontWeight: "600",
+                    }}
+                  >
+                    ±{result.tolerance}%
+                  </Text>
+                </View>
+              )}
+            </BlurView>
+          </View>
+        )}
+
         {mode === "valueToColor" && (
           <View
             style={{
@@ -570,6 +662,67 @@ export default function Home() {
                   borderColor: colors.border,
                 }}
               />
+
+              {/* Tolerance Selection */}
+              <View style={{ marginBottom: 15 }}>
+                <Text
+                  style={{
+                    color: colors.text,
+                    fontSize: 14,
+                    fontWeight: "600",
+                    marginBottom: 8,
+                  }}
+                >
+                  {t("tolerance")}
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    flexWrap: "wrap",
+                    gap: 8,
+                  }}
+                >
+                  {TOLERANCE_COLORS.map((color) => (
+                    <TouchableOpacity
+                      key={color}
+                      onPress={() => setSelectedTolerance(color)}
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        backgroundColor: selectedTolerance === color ? colors.primary : colors.surface,
+                        borderRadius: 8,
+                        paddingHorizontal: 12,
+                        paddingVertical: 8,
+                        borderWidth: 1,
+                        borderColor: selectedTolerance === color ? colors.primary : colors.border,
+                        minWidth: 60,
+                        justifyContent: "center",
+                      }}
+                    >
+                      <View
+                        style={{
+                          width: 16,
+                          height: 16,
+                          backgroundColor: RESISTOR_COLORS[color].color,
+                          borderRadius: 8,
+                          marginRight: 6,
+                          borderWidth: color === "white" ? 1 : 0,
+                          borderColor: colors.border,
+                        }}
+                      />
+                      <Text
+                        style={{
+                          color: selectedTolerance === color ? "#fff" : colors.text,
+                          fontSize: 12,
+                          fontWeight: "600",
+                        }}
+                      >
+                        ±{RESISTOR_COLORS[color].tolerance}%
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
               <TouchableOpacity
                 onPress={handleValueToColor}
                 style={{
@@ -657,90 +810,6 @@ export default function Home() {
                 </BlurView>
               </View>
             ))}
-          </View>
-        )}
-
-        {/* Results */}
-        {(result || currentResistance) && (
-          <View
-            style={{
-              marginHorizontal: 20,
-              marginVertical: 20,
-            }}
-          >
-            <BlurView
-              intensity={glassmorphism.blurIntensity}
-              style={{
-                borderRadius: 20,
-                overflow: "hidden",
-                backgroundColor: glassmorphism.backgroundColor,
-                borderWidth: 1,
-                borderColor: glassmorphism.borderColor,
-                padding: 24,
-                shadowColor: glassmorphism.shadowColor,
-                shadowOffset: glassmorphism.shadowOffset,
-                shadowOpacity: glassmorphism.shadowOpacity,
-                shadowRadius: glassmorphism.shadowRadius,
-                elevation: 8,
-              }}
-            >
-              <Text
-                style={{
-                  color: colors.text,
-                  fontSize: 18,
-                  fontWeight: "bold",
-                  marginBottom: 15,
-                  textAlign: "center",
-                }}
-              >
-                {t("results")}
-              </Text>
-
-              <View style={{ marginBottom: 10 }}>
-                <Text
-                  style={{
-                    color: colors.textSecondary,
-                    fontSize: 14,
-                    marginBottom: 5,
-                  }}
-                >
-                  {t("resistance")}
-                  {!result && currentResistance && ` (${t("approximate")})`}
-                </Text>
-                <Text
-                  style={{
-                    color: colors.text,
-                    fontSize: 20,
-                    fontWeight: "bold",
-                  }}
-                >
-                  {formatResistance(result ? result.resistance : currentResistance)}
-                </Text>
-              </View>
-
-              {result && (
-                <View style={{ marginBottom: 10 }}>
-                  <Text
-                    style={{
-                      color: colors.textSecondary,
-                      fontSize: 14,
-                      marginBottom: 5,
-                    }}
-                  >
-                    {t("tolerance")}
-                  </Text>
-                  <Text
-                    style={{
-                      color: colors.text,
-                      fontSize: 16,
-                      fontWeight: "600",
-                    }}
-                  >
-                    ±{result.tolerance}%
-                  </Text>
-                </View>
-              )}
-            </BlurView>
           </View>
         )}
 
