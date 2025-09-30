@@ -161,6 +161,38 @@ export default function Home() {
     setSelectedTolerance(bandCount === 4 ? "gold" : "brown");
   }, [bandCount]);
 
+  // Auto-calculate when input value or tolerance changes in valueToColor mode
+  useEffect(() => {
+    if (mode === "valueToColor" && inputValue.trim()) {
+      const resistance = parseResistanceInput(inputValue);
+      if (resistance) {
+        const calculation = calculateColors(resistance, bandCount);
+        if (calculation) {
+          // Use the selected tolerance instead of the calculated one
+          const toleranceValue = RESISTOR_COLORS[selectedTolerance]?.tolerance;
+          setSelectedBands([...calculation.bands.slice(0, bandCount - 1), selectedTolerance].concat(Array(5 - bandCount).fill(null)).slice(0, 5));
+          setResult({
+            resistance: calculation.resistance,
+            tolerance: toleranceValue,
+            tempCoefficient: null,
+          });
+        } else {
+          // Clear result if calculation fails
+          setResult(null);
+          setSelectedBands(Array(5).fill(null));
+        }
+      } else {
+        // Clear result if input is invalid
+        setResult(null);
+        setSelectedBands(Array(5).fill(null));
+      }
+    } else if (mode === "valueToColor") {
+      // Clear result if no input
+      setResult(null);
+      setSelectedBands(Array(5).fill(null));
+    }
+  }, [inputValue, selectedTolerance, bandCount, mode]);
+
   const calculateIntermediateResistance = useCallback((bands, count) => {
     let resistance = null;
     if (count === 4) {
@@ -227,27 +259,7 @@ export default function Home() {
     [selectedBands, bandCount, calculateIntermediateResistance],
   );
 
-  const handleValueToColor = useCallback(() => {
-    const resistance = parseResistanceInput(inputValue);
-    if (!resistance) {
-      Alert.alert(t("error"), t("invalidValue"));
-      return;
-    }
 
-    const calculation = calculateColors(resistance, bandCount);
-    if (calculation) {
-      // Use the selected tolerance instead of the calculated one
-      const toleranceValue = RESISTOR_COLORS[selectedTolerance]?.tolerance;
-      setSelectedBands([...calculation.bands.slice(0, bandCount - 1), selectedTolerance].concat(Array(5 - bandCount).fill(null)).slice(0, 5));
-      setResult({
-        resistance: calculation.resistance,
-        tolerance: toleranceValue,
-        tempCoefficient: null,
-      });
-    } else {
-      Alert.alert(t("error"), t("invalidValue"));
-    }
-  }, [inputValue, bandCount, t, selectedTolerance]);
 
   const resetCalculator = useCallback(() => {
     setSelectedBands(Array(5).fill(null));
@@ -723,25 +735,6 @@ export default function Home() {
                   ))}
                 </View>
               </View>
-              <TouchableOpacity
-                onPress={handleValueToColor}
-                style={{
-                  backgroundColor: colors.primary,
-                  borderRadius: 12,
-                  padding: 15,
-                  alignItems: "center",
-                }}
-              >
-                <Text
-                  style={{
-                    color: "#fff",
-                    fontSize: 16,
-                    fontWeight: "600",
-                  }}
-                >
-                  {t("calculate")}
-                </Text>
-              </TouchableOpacity>
             </BlurView>
           </View>
         )}
