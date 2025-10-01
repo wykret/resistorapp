@@ -67,7 +67,7 @@ export default {
         // Open Graph tags
         "og:title": "Resistor App - Color Code Calculator",
         "og:description": "Calculate resistor values, identify color codes, and learn about electronic components with this comprehensive resistor app.",
-        "og:image": "https://wykret.github.io/resistorapp/assets/images/resistor-logo.png",
+        "og:image": "https://wykret.github.io/resistorapp/assets/images/icon.png",
         "og:url": "https://wykret.github.io/resistorapp/",
         "og:type": "website",
         "og:site_name": "Resistor App",
@@ -75,7 +75,7 @@ export default {
         "twitter:card": "summary_large_image",
         "twitter:title": "Resistor App - Color Code Calculator",
         "twitter:description": "Calculate resistor values, identify color codes, and learn about electronic components with this comprehensive resistor app.",
-        "twitter:image": "https://wykret.github.io/resistorapp/assets/images/resistor-logo.png"
+        "twitter:image": "https://wykret.github.io/resistorapp/assets/images/icon.png"
       }
     },
     experiments: {
