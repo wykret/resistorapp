@@ -791,7 +791,7 @@ export default function Home() {
                       key={color}
                       color={color}
                       isSelected={selectedTolerance === color}
-                      onPress={setSelectedTolerance}
+                      onPress={() => setSelectedTolerance(color)}
                     />
                   ))}
                 </View>
