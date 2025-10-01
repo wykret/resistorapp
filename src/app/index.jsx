@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Platform,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -25,32 +26,124 @@ import {
   parseResistanceInput,
 } from "@/utils/resistorColors";
 
-const ColorBand = ({ color, onPress, isSelected, size = "medium" }) => {
+// Memoized color band component for better performance
+const ColorBand = React.memo(({ color, onPress, isSelected, size = "medium" }) => {
   const { colors, glassmorphism } = useTheme();
   const colorData = RESISTOR_COLORS[color];
   const bandSize = size === "large" ? 60 : size === "small" ? 30 : 40;
 
+  // Platform-specific styling for better mobile performance
+  const containerStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
+    // Simplified styling for mobile web
+    width: bandSize,
+    height: bandSize,
+    backgroundColor: colorData.color,
+    borderRadius: 8,
+    borderWidth: isSelected ? 2 : 1,
+    borderColor: isSelected ? colors.primary : colors.border,
+    marginHorizontal: 2,
+    marginVertical: 2,
+  } : {
+    // Full styling for desktop and native
+    width: bandSize,
+    height: bandSize,
+    backgroundColor: colorData.color,
+    borderRadius: 12,
+    borderWidth: isSelected ? 3 : 1,
+    borderColor: isSelected ? colors.primary : glassmorphism.borderColor,
+    marginHorizontal: 4,
+    marginVertical: 4,
+    shadowColor: isSelected ? glassmorphism.shadowColor : "#000",
+    shadowOffset: { width: 0, height: isSelected ? 6 : 2 },
+    shadowOpacity: isSelected ? glassmorphism.shadowOpacity : 0.15,
+    shadowRadius: isSelected ? 12 : 4,
+    elevation: isSelected ? 8 : 3,
+  };
+
   return (
     <TouchableOpacity
       onPress={() => onPress(color)}
-      style={{
-        width: bandSize,
-        height: bandSize,
-        backgroundColor: colorData.color,
-        borderRadius: 12,
-        borderWidth: isSelected ? 3 : 1,
-        borderColor: isSelected ? colors.primary : glassmorphism.borderColor,
-        marginHorizontal: 4,
-        marginVertical: 4,
-        shadowColor: isSelected ? glassmorphism.shadowColor : "#000",
-        shadowOffset: { width: 0, height: isSelected ? 6 : 2 },
-        shadowOpacity: isSelected ? glassmorphism.shadowOpacity : 0.15,
-        shadowRadius: isSelected ? 12 : 4,
-        elevation: isSelected ? 8 : 3,
-      }}
+      style={containerStyle}
     />
   );
-};
+});
+
+// Memoized tolerance option component for mobile performance
+const ToleranceOption = React.memo(({ color, isSelected, onPress }) => {
+  const { colors } = useTheme();
+  const colorData = RESISTOR_COLORS[color];
+
+  // Platform-specific styling for mobile optimization
+  const containerStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
+    // Simplified mobile web styling
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: isSelected ? colors.primary : colors.surface,
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: isSelected ? colors.primary : colors.border,
+    minWidth: 50,
+    justifyContent: "center",
+  } : {
+    // Full styling for desktop and native
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: isSelected ? colors.primary : colors.surface,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: isSelected ? colors.primary : colors.border,
+    minWidth: 60,
+    justifyContent: "center",
+  };
+
+  const colorIndicatorStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
+    // Simplified for mobile
+    width: 12,
+    height: 12,
+    backgroundColor: colorData.color,
+    borderRadius: 6,
+    marginRight: 4,
+    borderWidth: color === "white" ? 1 : 0,
+    borderColor: colors.border,
+  } : {
+    // Full styling for desktop and native
+    width: 16,
+    height: 16,
+    backgroundColor: colorData.color,
+    borderRadius: 8,
+    marginRight: 6,
+    borderWidth: color === "white" ? 1 : 0,
+    borderColor: colors.border,
+  };
+
+  const textStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
+    // Simplified mobile text
+    color: isSelected ? "#fff" : colors.text,
+    fontSize: 11,
+    fontWeight: "600",
+  } : {
+    // Full styling for desktop and native
+    color: isSelected ? "#fff" : colors.text,
+    fontSize: 12,
+    fontWeight: "600",
+  };
+
+  return (
+    <TouchableOpacity
+      onPress={() => onPress(color)}
+      style={containerStyle}
+    >
+      <View style={colorIndicatorStyle} />
+      <Text style={textStyle}>
+        ±{colorData.tolerance}%
+      </Text>
+    </TouchableOpacity>
+  );
+});
 
 const ResistorDisplay = ({ bands, bandCount }) => {
   const { colors, glassmorphism } = useTheme();
@@ -387,8 +480,16 @@ export default function Home() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+        contentContainerStyle={Platform.OS === 'web' && window.innerWidth < 768 ? {
+          // Simplified mobile web styling
+          paddingBottom: insets.bottom + 20,
+        } : {
+          // Full styling for desktop and native
+          paddingBottom: insets.bottom + 20,
+        }}
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        decelerationRate="normal"
       >
         {/* Mode Toggle */}
         <View
@@ -598,7 +699,16 @@ export default function Home() {
             }}
           >
             <View
-              style={{
+              style={Platform.OS === 'web' && window.innerWidth < 768 ? {
+                // Simplified mobile web styling for better performance
+                borderRadius: 16,
+                overflow: "hidden",
+                backgroundColor: glassmorphism.backgroundColor,
+                borderWidth: 1,
+                borderColor: glassmorphism.borderColor,
+                padding: 16,
+              } : {
+                // Full styling for desktop and native
                 borderRadius: 20,
                 overflow: "hidden",
                 backgroundColor: glassmorphism.backgroundColor,
@@ -659,43 +769,12 @@ export default function Home() {
                   }}
                 >
                   {TOLERANCE_COLORS.map((color) => (
-                    <TouchableOpacity
+                    <ToleranceOption
                       key={color}
-                      onPress={() => setSelectedTolerance(color)}
-                      style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                        backgroundColor: selectedTolerance === color ? colors.primary : colors.surface,
-                        borderRadius: 8,
-                        paddingHorizontal: 12,
-                        paddingVertical: 8,
-                        borderWidth: 1,
-                        borderColor: selectedTolerance === color ? colors.primary : colors.border,
-                        minWidth: 60,
-                        justifyContent: "center",
-                      }}
-                    >
-                      <View
-                        style={{
-                          width: 16,
-                          height: 16,
-                          backgroundColor: RESISTOR_COLORS[color].color,
-                          borderRadius: 8,
-                          marginRight: 6,
-                          borderWidth: color === "white" ? 1 : 0,
-                          borderColor: colors.border,
-                        }}
-                      />
-                      <Text
-                        style={{
-                          color: selectedTolerance === color ? "#fff" : colors.text,
-                          fontSize: 12,
-                          fontWeight: "600",
-                        }}
-                      >
-                        ±{RESISTOR_COLORS[color].tolerance}%
-                      </Text>
-                    </TouchableOpacity>
+                      color={color}
+                      isSelected={selectedTolerance === color}
+                      onPress={setSelectedTolerance}
+                    />
                   ))}
                 </View>
               </View>
