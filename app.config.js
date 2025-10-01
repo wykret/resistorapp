@@ -45,7 +45,38 @@ export default {
       bundler: "metro",
       favicon: "./assets/images/favicon.png",
       publicPath: "/resistorapp/_expo/static/",
-      scope: "/resistorapp/"
+      scope: "/resistorapp/",
+      name: "Resistor App",
+      shortName: "Resistor",
+      description: "A comprehensive resistor calculator and color code reference app",
+      themeColor: "#2E7D32",
+      backgroundColor: "#ffffff",
+      display: "standalone",
+      orientation: "portrait",
+      lang: "en",
+      dir: "ltr",
+      startUrl: "/resistorapp/",
+      meta: {
+        viewport: "width=device-width, initial-scale=1, shrink-to-fit=no",
+        "theme-color": "#2E7D32",
+        "apple-mobile-web-app-capable": "yes",
+        "apple-mobile-web-app-status-bar-style": "default",
+        "apple-mobile-web-app-title": "Resistor",
+        "msapplication-TileColor": "#2E7D32",
+        "msapplication-tap-highlight": "no",
+        // Open Graph tags
+        "og:title": "Resistor App - Color Code Calculator",
+        "og:description": "Calculate resistor values, identify color codes, and learn about electronic components with this comprehensive resistor app.",
+        "og:image": "https://wykret.github.io/resistorapp/assets/images/resistor-logo.png",
+        "og:url": "https://wykret.github.io/resistorapp/",
+        "og:type": "website",
+        "og:site_name": "Resistor App",
+        // Twitter Card tags
+        "twitter:card": "summary_large_image",
+        "twitter:title": "Resistor App - Color Code Calculator",
+        "twitter:description": "Calculate resistor values, identify color codes, and learn about electronic components with this comprehensive resistor app.",
+        "twitter:image": "https://wykret.github.io/resistorapp/assets/images/resistor-logo.png"
+      }
     },
     experiments: {
       baseUrl: "/resistorapp",
