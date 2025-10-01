@@ -132,10 +132,14 @@ export default function Language() {
         </Text>
       </View>
 
-      <ScrollView 
+      <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: insets.bottom + 20 }}
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 20,
+        }}
         showsVerticalScrollIndicator={false}
+        scrollEventThrottle={16}
+        decelerationRate="normal"
       >
         {/* Header Section */}
         <View style={{
