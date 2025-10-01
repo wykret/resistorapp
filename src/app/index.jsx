@@ -487,7 +487,7 @@ export default function Home() {
           // Full styling for desktop and native
           paddingBottom: insets.bottom + 20,
         }}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         scrollEventThrottle={16}
         decelerationRate="normal"
       >

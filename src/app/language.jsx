@@ -137,7 +137,7 @@ export default function Language() {
         contentContainerStyle={{
           paddingBottom: insets.bottom + 20,
         }}
-        showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={true}
         scrollEventThrottle={16}
         decelerationRate="normal"
       >
