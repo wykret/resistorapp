@@ -1,3 +1,21 @@
+/*
+ * Resistor App - Mobile
+ * Copyright (C) 2025 wykret
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 // Resistor color code data and calculations
 export const RESISTOR_COLORS = {
   black: { value: 0, multiplier: 1, tolerance: null, tempCoeff: null, color: '#000000' },
@@ -180,23 +198,37 @@ export const parseResistanceInput = (input) => {
   if (!input || typeof input !== 'string') {
     return null;
   }
-  
+
   const cleanInput = input.trim().toLowerCase();
-  let value = parseFloat(cleanInput);
-  
+
+  // Handle cases where the input doesn't start with a number (like "M" or "kΩ")
+  // Extract the numeric part first
+  const numberMatch = cleanInput.match(/^(\d+(?:\.\d+)?)/);
+  if (!numberMatch) {
+    return null;
+  }
+
+  let value = parseFloat(numberMatch[1]);
+
   if (isNaN(value)) {
     return null;
   }
-  
-  if (cleanInput.includes('m') && cleanInput.includes('ω')) {
+
+  // Get the suffix part (everything after the number)
+  const suffix = cleanInput.substring(numberMatch[1].length).trim();
+
+  // Handle engineering notation suffixes
+  if (suffix.includes('m') && suffix.includes('ω')) {
     value *= 1000000; // MΩ
-  } else if (cleanInput.includes('k') && cleanInput.includes('ω')) {
+  } else if (suffix.includes('k') && suffix.includes('ω')) {
     value *= 1000; // kΩ
-  } else if (cleanInput.includes('meg')) {
-    value *= 1000000; // Meg
-  } else if (cleanInput.includes('k')) {
+  } else if (suffix === 'm' || suffix === 'meg' || suffix === 'mega') {
+    value *= 1000000; // M, Meg, or Mega
+  } else if (suffix === 'k') {
     value *= 1000; // k
+  } else if (suffix === 'm') {
+    value *= 0.001; // m (milli)
   }
-  
+
   return value > 0 ? value : null;
 };

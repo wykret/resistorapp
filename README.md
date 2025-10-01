@@ -30,7 +30,7 @@ Envie Bitcoin(on-chain): `bc1qvzfjzavexfvt4q0w4350ny5gxsx0ggxw7s2sn0`
 Envie Bitcoin(Lightning): `bct123@bipa.app`
 
 ### 📄 Licença
-Este projeto está licenciado sob a GNU General Public License v2.0 - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto está licenciado sob a GNU General Public License v3.0 - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ---
 
