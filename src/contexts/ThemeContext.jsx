@@ -90,31 +90,31 @@ export const ThemeProvider = ({ children }) => {
       warning: isDark ? '#ffe66d' : '#ff9500',
       error: isDark ? '#ff6b6b' : '#ff3b30',
     },
-    // Glassmorphism styles for modern glass-like UI effects
+    // Simplified glassmorphism styles for better performance
     glassmorphism: {
-      // Backgrounds with different transparency levels
-      backgroundColor: isDark ? 'rgba(30, 30, 30, 0.85)' : 'rgba(255, 255, 255, 0.85)',
-      backgroundColorLight: isDark ? 'rgba(40, 40, 40, 0.7)' : 'rgba(255, 255, 255, 0.7)',
+      // Backgrounds with reduced transparency for better performance
+      backgroundColor: isDark ? 'rgba(30, 30, 30, 0.9)' : 'rgba(255, 255, 255, 0.9)',
+      backgroundColorLight: isDark ? 'rgba(40, 40, 40, 0.8)' : 'rgba(255, 255, 255, 0.8)',
       backgroundColorHeavy: isDark ? 'rgba(20, 20, 20, 0.95)' : 'rgba(255, 255, 255, 0.95)',
 
-      // Borders with subtle gradients
-      borderColor: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)',
-      borderColorAccent: isDark ? 'rgba(74, 158, 255, 0.3)' : 'rgba(0, 122, 255, 0.2)',
+      // Simplified borders
+      borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+      borderColorAccent: isDark ? 'rgba(74, 158, 255, 0.2)' : 'rgba(0, 122, 255, 0.2)',
 
-      // Sophisticated shadows
-      shadowColor: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.1)',
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: isDark ? 0.6 : 0.15,
-      shadowRadius: isDark ? 16 : 12,
+      // Simplified shadows for better performance
+      shadowColor: isDark ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.1)',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: isDark ? 0.4 : 0.1,
+      shadowRadius: isDark ? 8 : 6,
 
-      // Gradient effects
+      // Simplified gradient effects
       gradientStart: isDark ? 'rgba(30, 30, 30, 0.9)' : 'rgba(255, 255, 255, 0.9)',
-      gradientEnd: isDark ? 'rgba(20, 20, 20, 0.7)' : 'rgba(248, 248, 248, 0.7)',
+      gradientEnd: isDark ? 'rgba(20, 20, 20, 0.8)' : 'rgba(248, 248, 248, 0.8)',
 
-      // Blur intensities for backdrop effects
-      blurIntensity: 25,
-      blurIntensityLight: 15,
-      blurIntensityHeavy: 35,
+      // Reduced blur intensities for better performance
+      blurIntensity: 15,
+      blurIntensityLight: 10,
+      blurIntensityHeavy: 20,
     }
   };
 
