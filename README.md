@@ -40,7 +40,7 @@ Este projeto está licenciado sob a GNU General Public License v3.0 - veja o arq
 App to identify resistor values from color bands.
 
 ### 🌐 Web App
-Access the web version at: [wykret.github.io/resistorapp](https://wykret.github.io/resistorapp/)
+Access the web version at: [wykret.github.io/resistorapp](https://wykret.github.io/resistorapp/) 
 
 ### 📲 Installation
 Download at [releases](https://github.com/wykret/resistorapp/releases).

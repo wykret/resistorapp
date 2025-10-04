@@ -55,12 +55,17 @@ const Wrapper = memo(() => {
     <ErrorBoundaryWrapper>
       <SafeAreaProvider
         initialMetrics={{
-          insets: { top: 64, bottom: 34, left: 0, right: 0 },
+          insets: {
+            top: typeof window === 'undefined' ? 64 : (window.innerWidth < 768 ? 64 : 20),
+            bottom: typeof window === 'undefined' ? 34 : (window.innerWidth < 768 ? 34 : 20),
+            left: 0,
+            right: 0
+          },
           frame: {
             x: 0,
             y: 0,
-            width: typeof window === 'undefined' ? 390 : window.innerWidth,
-            height: typeof window === 'undefined' ? 844 : window.innerHeight,
+            width: typeof window === 'undefined' ? 1920 : window.innerWidth,
+            height: typeof window === 'undefined' ? 1080 : window.innerHeight,
           },
         }}
       >

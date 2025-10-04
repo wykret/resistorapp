@@ -44,38 +44,49 @@ import {
   parseResistanceInput,
 } from "@/utils/resistorColors";
 
+// Helper function to get responsive breakpoints
+const getBreakpoint = () => {
+  if (typeof window === 'undefined') return 'desktop';
+  const width = window.innerWidth;
+  if (width < 768) return 'mobile';
+  if (width < 1024) return 'tablet';
+  return 'desktop';
+};
+
 // Memoized color band component for better performance
 const ColorBand = React.memo(({ color, onPress, isSelected, size = "medium" }) => {
   const { colors, glassmorphism } = useTheme();
   const colorData = RESISTOR_COLORS[color];
-  const bandSize = size === "large" ? 60 : size === "small" ? 30 : 40;
+  const breakpoint = getBreakpoint();
 
-  // Platform-specific styling for better mobile performance
-  const containerStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
-    // Simplified styling for mobile web
+  // Responsive sizing based on screen size
+  const getBandSize = () => {
+    if (breakpoint === 'mobile') {
+      return size === "large" ? 50 : size === "small" ? 25 : 35;
+    } else if (breakpoint === 'tablet') {
+      return size === "large" ? 55 : size === "small" ? 28 : 38;
+    } else {
+      return size === "large" ? 60 : size === "small" ? 30 : 40;
+    }
+  };
+
+  const bandSize = getBandSize();
+
+  // Responsive styling based on breakpoint
+  const containerStyle = {
     width: bandSize,
     height: bandSize,
     backgroundColor: colorData.color,
-    borderRadius: 8,
-    borderWidth: isSelected ? 2 : 1,
-    borderColor: isSelected ? colors.primary : colors.border,
-    marginHorizontal: 2,
-    marginVertical: 2,
-  } : {
-    // Full styling for desktop and native
-    width: bandSize,
-    height: bandSize,
-    backgroundColor: colorData.color,
-    borderRadius: 12,
-    borderWidth: isSelected ? 3 : 1,
-    borderColor: isSelected ? colors.primary : glassmorphism.borderColor,
-    marginHorizontal: 4,
-    marginVertical: 4,
-    shadowColor: isSelected ? glassmorphism.shadowColor : "#000",
-    shadowOffset: { width: 0, height: isSelected ? 6 : 2 },
-    shadowOpacity: isSelected ? glassmorphism.shadowOpacity : 0.15,
-    shadowRadius: isSelected ? 12 : 4,
-    elevation: isSelected ? 8 : 3,
+    borderRadius: breakpoint === 'mobile' ? 8 : 12,
+    borderWidth: isSelected ? (breakpoint === 'mobile' ? 2 : 3) : 1,
+    borderColor: isSelected ? colors.primary : (breakpoint === 'mobile' ? colors.border : glassmorphism.borderColor),
+    marginHorizontal: breakpoint === 'mobile' ? 2 : 4,
+    marginVertical: breakpoint === 'mobile' ? 2 : 4,
+    shadowColor: breakpoint === 'mobile' ? (isSelected ? colors.primary : "#000") : (isSelected ? glassmorphism.shadowColor : "#000"),
+    shadowOffset: { width: 0, height: isSelected ? (breakpoint === 'mobile' ? 4 : 6) : (breakpoint === 'mobile' ? 1 : 2) },
+    shadowOpacity: breakpoint === 'mobile' ? (isSelected ? 0.3 : 0.1) : (isSelected ? glassmorphism.shadowOpacity : 0.15),
+    shadowRadius: breakpoint === 'mobile' ? (isSelected ? 8 : 3) : (isSelected ? 12 : 4),
+    elevation: isSelected ? (breakpoint === 'mobile' ? 6 : 8) : (breakpoint === 'mobile' ? 2 : 3),
   };
 
   return (
@@ -86,67 +97,69 @@ const ColorBand = React.memo(({ color, onPress, isSelected, size = "medium" }) =
   );
 });
 
-// Memoized tolerance option component for mobile performance
+// Memoized tolerance option component with responsive design
 const ToleranceOption = React.memo(({ color, isSelected, onPress }) => {
   const { colors } = useTheme();
   const colorData = RESISTOR_COLORS[color];
+  const breakpoint = getBreakpoint();
 
-  // Platform-specific styling for mobile optimization
-  const containerStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
-    // Simplified mobile web styling
+  // Responsive sizing and styling
+  const getDimensions = () => {
+    if (breakpoint === 'mobile') {
+      return {
+        containerPadding: { horizontal: 8, vertical: 6 },
+        colorIndicator: { width: 12, height: 12, marginRight: 4 },
+        textSize: 11,
+        minWidth: 50,
+        borderRadius: 6,
+      };
+    } else if (breakpoint === 'tablet') {
+      return {
+        containerPadding: { horizontal: 10, vertical: 7 },
+        colorIndicator: { width: 14, height: 14, marginRight: 5 },
+        textSize: 11.5,
+        minWidth: 55,
+        borderRadius: 7,
+      };
+    } else {
+      return {
+        containerPadding: { horizontal: 12, vertical: 8 },
+        colorIndicator: { width: 16, height: 16, marginRight: 6 },
+        textSize: 12,
+        minWidth: 60,
+        borderRadius: 8,
+      };
+    }
+  };
+
+  const dimensions = getDimensions();
+
+  const containerStyle = {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: isSelected ? colors.primary : colors.surface,
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
+    borderRadius: dimensions.borderRadius,
+    paddingHorizontal: dimensions.containerPadding.horizontal,
+    paddingVertical: dimensions.containerPadding.vertical,
     borderWidth: 1,
     borderColor: isSelected ? colors.primary : colors.border,
-    minWidth: 50,
-    justifyContent: "center",
-  } : {
-    // Full styling for desktop and native
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: isSelected ? colors.primary : colors.surface,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: isSelected ? colors.primary : colors.border,
-    minWidth: 60,
+    minWidth: dimensions.minWidth,
     justifyContent: "center",
   };
 
-  const colorIndicatorStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
-    // Simplified for mobile
-    width: 12,
-    height: 12,
+  const colorIndicatorStyle = {
+    width: dimensions.colorIndicator.width,
+    height: dimensions.colorIndicator.height,
     backgroundColor: colorData.color,
-    borderRadius: 6,
-    marginRight: 4,
-    borderWidth: color === "white" ? 1 : 0,
-    borderColor: colors.border,
-  } : {
-    // Full styling for desktop and native
-    width: 16,
-    height: 16,
-    backgroundColor: colorData.color,
-    borderRadius: 8,
-    marginRight: 6,
+    borderRadius: dimensions.borderRadius,
+    marginRight: dimensions.colorIndicator.marginRight,
     borderWidth: color === "white" ? 1 : 0,
     borderColor: colors.border,
   };
 
-  const textStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
-    // Simplified mobile text
+  const textStyle = {
     color: isSelected ? "#fff" : colors.text,
-    fontSize: 11,
-    fontWeight: "600",
-  } : {
-    // Full styling for desktop and native
-    color: isSelected ? "#fff" : colors.text,
-    fontSize: 12,
+    fontSize: dimensions.textSize,
     fontWeight: "600",
   };
 
@@ -165,6 +178,44 @@ const ToleranceOption = React.memo(({ color, isSelected, onPress }) => {
 
 const ResistorDisplay = ({ bands, bandCount }) => {
   const { colors, glassmorphism } = useTheme();
+  const breakpoint = getBreakpoint();
+
+  // Responsive resistor display sizing
+  const getResistorDimensions = () => {
+    if (breakpoint === 'mobile') {
+      return {
+        containerPadding: { vertical: 16, horizontal: 20 },
+        resistorWidth: 160,
+        resistorHeight: 32,
+        bandWidth: bandCount === 5 ? 10 : 12,
+        bandHeight: 28,
+        leadWidth: 16,
+        marginVertical: 15,
+      };
+    } else if (breakpoint === 'tablet') {
+      return {
+        containerPadding: { vertical: 20, horizontal: 28 },
+        resistorWidth: 180,
+        resistorHeight: 36,
+        bandWidth: bandCount === 5 ? 11 : 14,
+        bandHeight: 32,
+        leadWidth: 18,
+        marginVertical: 18,
+      };
+    } else {
+      return {
+        containerPadding: { vertical: 24, horizontal: 32 },
+        resistorWidth: 200,
+        resistorHeight: 40,
+        bandWidth: bandCount === 5 ? 12 : 15,
+        bandHeight: 35,
+        leadWidth: 20,
+        marginVertical: 20,
+      };
+    }
+  };
+
+  const dimensions = getResistorDimensions();
 
   return (
     <View
@@ -173,36 +224,36 @@ const ResistorDisplay = ({ bands, bandCount }) => {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "transparent",
-        borderRadius: 24,
-        paddingVertical: 24,
-        paddingHorizontal: 32,
-        marginVertical: 20,
+        borderRadius: breakpoint === 'mobile' ? 16 : 24,
+        paddingVertical: dimensions.containerPadding.vertical,
+        paddingHorizontal: dimensions.containerPadding.horizontal,
+        marginVertical: dimensions.marginVertical,
         shadowColor: glassmorphism.shadowColor,
-        shadowOffset: { width: 0, height: 8 },
+        shadowOffset: { width: 0, height: breakpoint === 'mobile' ? 6 : 8 },
         shadowOpacity: glassmorphism.shadowOpacity,
-        shadowRadius: 16,
-        elevation: 8,
+        shadowRadius: breakpoint === 'mobile' ? 12 : 16,
+        elevation: breakpoint === 'mobile' ? 6 : 8,
       }}
     >
       {/* Resistor body */}
       <View
         style={{
-          width: 200,
-          height: 40,
+          width: dimensions.resistorWidth,
+          height: dimensions.resistorHeight,
           backgroundColor: "#F5DEB3",
-          borderRadius: 20,
+          borderRadius: breakpoint === 'mobile' ? 16 : 20,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-around",
-          paddingHorizontal: 10,
+          paddingHorizontal: breakpoint === 'mobile' ? 8 : 10,
         }}
       >
         {bands.slice(0, bandCount).map((band, index) => (
           <View
             key={index}
             style={{
-              width: bandCount === 5 ? 12 : 15,
-              height: 35,
+              width: dimensions.bandWidth,
+              height: dimensions.bandHeight,
               backgroundColor: band
                 ? RESISTOR_COLORS[band].color
                 : colors.border,
@@ -218,8 +269,8 @@ const ResistorDisplay = ({ bands, bandCount }) => {
       <View
         style={{
           position: "absolute",
-          left: -20,
-          width: 20,
+          left: -dimensions.leadWidth,
+          width: dimensions.leadWidth,
           height: 2,
           backgroundColor: "#C0C0C0",
         }}
@@ -227,8 +278,8 @@ const ResistorDisplay = ({ bands, bandCount }) => {
       <View
         style={{
           position: "absolute",
-          right: -20,
-          width: 20,
+          right: -dimensions.leadWidth,
+          width: dimensions.leadWidth,
           height: 2,
           backgroundColor: "#C0C0C0",
         }}
@@ -498,11 +549,7 @@ export default function Home() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={Platform.OS === 'web' && window.innerWidth < 768 ? {
-          // Simplified mobile web styling
-          paddingBottom: insets.bottom + 20,
-        } : {
-          // Full styling for desktop and native
+        contentContainerStyle={{
           paddingBottom: insets.bottom + 20,
         }}
         showsVerticalScrollIndicator={true}
@@ -717,27 +764,18 @@ export default function Home() {
             }}
           >
             <View
-              style={Platform.OS === 'web' && window.innerWidth < 768 ? {
-                // Simplified mobile web styling for better performance
-                borderRadius: 16,
+              style={{
+                borderRadius: breakpoint === 'mobile' ? 16 : 20,
                 overflow: "hidden",
                 backgroundColor: glassmorphism.backgroundColor,
                 borderWidth: 1,
                 borderColor: glassmorphism.borderColor,
-                padding: 16,
-              } : {
-                // Full styling for desktop and native
-                borderRadius: 20,
-                overflow: "hidden",
-                backgroundColor: glassmorphism.backgroundColor,
-                borderWidth: 1,
-                borderColor: glassmorphism.borderColor,
-                padding: 24,
+                padding: breakpoint === 'mobile' ? 16 : 24,
                 shadowColor: glassmorphism.shadowColor,
                 shadowOffset: glassmorphism.shadowOffset,
-                shadowOpacity: glassmorphism.shadowOpacity * 0.5,
-                shadowRadius: 8,
-                elevation: 4,
+                shadowOpacity: glassmorphism.shadowOpacity * (breakpoint === 'mobile' ? 0.3 : 0.5),
+                shadowRadius: breakpoint === 'mobile' ? 6 : 8,
+                elevation: breakpoint === 'mobile' ? 3 : 4,
               }}
             >
               <Text
