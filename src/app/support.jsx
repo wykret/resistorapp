@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Alert,
   Modal,
   Linking,
+  Platform,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -25,6 +26,49 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import * as Clipboard from "expo-clipboard";
 import QRCodeGenerator from "@/components/QRCodeGenerator";
+import { BannerAd, BannerAdSize, TestIds } from "expo-ads-admob";
+
+// AdSense Ad Component for Web
+const AdSenseAd = () => {
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      // Load AdSense script if not already loaded
+      if (!document.querySelector('script[src*="googlesyndication.com"]')) {
+        const script = document.createElement('script');
+        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8862246561651365';
+        script.async = true;
+        script.crossOrigin = 'anonymous';
+        document.head.appendChild(script);
+
+        script.onload = () => {
+          // Push ad initialization
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        };
+      } else {
+        // If script is already loaded, just reinitialize
+        setTimeout(() => {
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+        }, 1000);
+      }
+    }
+  }, []);
+
+  return (
+    <div
+      id="adsense-ad"
+      style={{ minHeight: '90px', textAlign: 'center' }}
+    >
+      <ins
+        className="adsbygoogle"
+        style={{ display: 'block' }}
+        data-ad-client="ca-pub-8862246561651365"
+        data-ad-slot="" // Note: Ad slot ID needs to be configured in AdSense dashboard
+        data-ad-format="auto"
+        data-full-width-responsive="true"
+      />
+    </div>
+  );
+};
 
 const PaymentOption = ({ title, address, icon: Icon, description }) => {
   const { colors, glassmorphism } = useTheme();
@@ -497,6 +541,19 @@ export default function Support() {
               {t("thankYouMessage")}
             </Text>
           </BlurView>
+        </View>
+
+        {/* Ads Section */}
+        <View style={{ marginHorizontal: 20, marginVertical: 30, alignItems: 'center' }}>
+          {Platform.OS === 'web' ? <AdSenseAd /> : (
+            <BannerAd
+              unitId={__DEV__ ? TestIds.BANNER : 'ca-app-pub-8862246561651365/5961963293'}
+              size={BannerAdSize.BANNER}
+              requestOptions={{
+                requestNonPersonalizedAdsOnly: true,
+              }}
+            />
+          )}
         </View>
       </ScrollView>
     </View>

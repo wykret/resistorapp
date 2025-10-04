@@ -30,7 +30,8 @@ export default {
       bundleIdentifier: "com.resistor.resistor",
       infoPlist: {
         "ITSAppUsesNonExemptEncryption": false
-      }
+      },
+      googleMobileAdsAppId: "ca-app-pub-8862246561651365~2313528170"
     },
     android: {
       adaptiveIcon: {
@@ -39,7 +40,8 @@ export default {
       },
       package: "com.resistor.resistor",
       enableHermes: true,
-      enableProguardInReleaseBuilds: true
+      enableProguardInReleaseBuilds: true,
+      googleMobileAdsAppId: "ca-app-pub-8862246561651365~2313528170"
     },
     web: {
       bundler: "metro",
@@ -92,6 +94,9 @@ export default {
       }],
       ["expo-build-properties", {
         ios: { useFrameworks: "static" }
+      }],
+      ["expo-ads-admob", {
+        userTrackingUsageDescription: "This identifier will be used to deliver personalized ads to you."
       }]
     ],
     extra: {
