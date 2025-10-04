@@ -1,0 +1,57 @@
+# Resistor App - Mobile
+
+[🇧🇷 Português](#-português) | [🇬🇧 English](#-english)
+
+---
+
+## 🇧🇷 Português
+
+### 📌 Sobre
+Aplicativo para identificar valores de resistores pelas cores.
+
+### 🌐 Web App
+Acesse a versão web em: [wykret.github.io/resistorapp](https://wykret.github.io/resistorapp/)
+
+### 📲 Instalação
+Baixe em [releases](https://github.com/wykret/resistorapp/releases).
+
+### ⚡ Funcionalidades
+- Valor → cores / cores → valor
+- 4 e 5 cores
+- Português / Inglês
+- Mobile-friendly
+
+### 💜 Apoie
+
+Apoie via Livepix: [livepix.gg/wykret](https://livepix.gg/wykret)
+
+Envie Bitcoin(on-chain): `bc1qvzfjzavexfvt4q0w4350ny5gxsx0ggxw7s2sn0`
+
+Envie Bitcoin(Lightning): `bct123@bipa.app`
+
+### 📄 Licença
+Este projeto está licenciado sob a GNU General Public License v3.0 - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+## 🇬🇧 English
+
+### 📌 About
+App to identify resistor values from color bands.
+
+### 🌐 Web App
+Access the web version at: [wykret.github.io/resistorapp](https://wykret.github.io/resistorapp/)
+
+### 📲 Installation
+Download at [releases](https://github.com/wykret/resistorapp/releases).
+
+### ⚡ Features
+- Value → colors / colors → value
+- 4 and 5 colors
+- Portuguese / English
+- Mobile-friendly
+
+### 💜 Support
+Send Bitcoin(on-chain): `bc1qvzfjzavexfvt4q0w4350ny5gxsx0ggxw7s2sn0`
+
+Send Bitcoin(Lightning): `bct123@bipa.app`
