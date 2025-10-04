@@ -46,7 +46,7 @@ import {
 
 // Helper function to get responsive breakpoints
 const getBreakpoint = () => {
-  if (typeof window === 'undefined') return 'desktop';
+  if (Platform.OS !== 'web' || typeof window === 'undefined') return 'mobile';
   const width = window.innerWidth;
   if (width < 768) return 'mobile';
   if (width < 1024) return 'tablet';
