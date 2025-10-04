@@ -33,6 +33,7 @@ import { Menu, Sun, Moon, Calculator, Heart } from "lucide-react-native";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useResponsive, responsiveFontSize, responsiveSpacing, responsivePadding } from "@/utils/responsive";
 import {
   RESISTOR_COLORS,
   DIGIT_COLORS,
@@ -48,34 +49,57 @@ import {
 const ColorBand = React.memo(({ color, onPress, isSelected, size = "medium" }) => {
   const { colors, glassmorphism } = useTheme();
   const colorData = RESISTOR_COLORS[color];
-  const bandSize = size === "large" ? 60 : size === "small" ? 30 : 40;
 
-  // Platform-specific styling for better mobile performance
-  const containerStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
-    // Simplified styling for mobile web
-    width: bandSize,
-    height: bandSize,
+  // Responsive band sizing
+  const baseSize = responsiveValue({
+    mobile: size === "large" ? 50 : size === "small" ? 28 : 36,
+    tablet: size === "large" ? 55 : size === "small" ? 30 : 40,
+    desktop: size === "large" ? 60 : size === "small" ? 32 : 44,
+    large_desktop: size === "large" ? 65 : size === "small" ? 34 : 48,
+  });
+
+  const marginSize = responsiveValue({
+    mobile: 2,
+    tablet: 3,
+    desktop: 4,
+    large_desktop: 5,
+  });
+
+  const borderRadius = responsiveValue({
+    mobile: 6,
+    tablet: 8,
+    desktop: 10,
+    large_desktop: 12,
+  });
+
+  const borderWidth = responsiveValue({
+    mobile: isSelected ? 1.5 : 1,
+    tablet: isSelected ? 2 : 1,
+    desktop: isSelected ? 2.5 : 1,
+    large_desktop: isSelected ? 3 : 1,
+  });
+
+  const shadowRadius = responsiveValue({
+    mobile: isSelected ? 6 : 2,
+    tablet: isSelected ? 8 : 3,
+    desktop: isSelected ? 10 : 4,
+    large_desktop: isSelected ? 12 : 4,
+  });
+
+  const containerStyle = {
+    width: baseSize,
+    height: baseSize,
     backgroundColor: colorData.color,
-    borderRadius: 8,
-    borderWidth: isSelected ? 2 : 1,
-    borderColor: isSelected ? colors.primary : colors.border,
-    marginHorizontal: 2,
-    marginVertical: 2,
-  } : {
-    // Full styling for desktop and native
-    width: bandSize,
-    height: bandSize,
-    backgroundColor: colorData.color,
-    borderRadius: 12,
-    borderWidth: isSelected ? 3 : 1,
+    borderRadius,
+    borderWidth,
     borderColor: isSelected ? colors.primary : glassmorphism.borderColor,
-    marginHorizontal: 4,
-    marginVertical: 4,
+    marginHorizontal: marginSize,
+    marginVertical: marginSize,
     shadowColor: isSelected ? glassmorphism.shadowColor : "#000",
-    shadowOffset: { width: 0, height: isSelected ? 6 : 2 },
+    shadowOffset: { width: 0, height: isSelected ? shadowRadius * 1.5 : shadowRadius * 0.5 },
     shadowOpacity: isSelected ? glassmorphism.shadowOpacity : 0.15,
-    shadowRadius: isSelected ? 12 : 4,
-    elevation: isSelected ? 8 : 3,
+    shadowRadius,
+    elevation: isSelected ? shadowRadius * 2 : shadowRadius * 0.75,
   };
 
   return (
@@ -91,62 +115,82 @@ const ToleranceOption = React.memo(({ color, isSelected, onPress }) => {
   const { colors } = useTheme();
   const colorData = RESISTOR_COLORS[color];
 
-  // Platform-specific styling for mobile optimization
-  const containerStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
-    // Simplified mobile web styling
+  // Responsive styling
+  const borderRadius = responsiveValue({
+    mobile: 5,
+    tablet: 6,
+    desktop: 7,
+    large_desktop: 8,
+  });
+
+  const paddingHorizontal = responsiveValue({
+    mobile: 6,
+    tablet: 8,
+    desktop: 10,
+    large_desktop: 12,
+  });
+
+  const paddingVertical = responsiveValue({
+    mobile: 4,
+    tablet: 6,
+    desktop: 7,
+    large_desktop: 8,
+  });
+
+  const minWidth = responsiveValue({
+    mobile: 45,
+    tablet: 50,
+    desktop: 55,
+    large_desktop: 60,
+  });
+
+  const colorIndicatorSize = responsiveValue({
+    mobile: 10,
+    tablet: 12,
+    desktop: 14,
+    large_desktop: 16,
+  });
+
+  const marginRight = responsiveValue({
+    mobile: 3,
+    tablet: 4,
+    desktop: 5,
+    large_desktop: 6,
+  });
+
+  const fontSize = responsiveValue({
+    mobile: 10,
+    tablet: 11,
+    desktop: 11.5,
+    large_desktop: 12,
+  });
+
+  const containerStyle = {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: isSelected ? colors.primary : colors.surface,
-    borderRadius: 6,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
+    borderRadius,
+    paddingHorizontal,
+    paddingVertical,
     borderWidth: 1,
     borderColor: isSelected ? colors.primary : colors.border,
-    minWidth: 50,
-    justifyContent: "center",
-  } : {
-    // Full styling for desktop and native
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: isSelected ? colors.primary : colors.surface,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: isSelected ? colors.primary : colors.border,
-    minWidth: 60,
+    minWidth,
     justifyContent: "center",
   };
 
-  const colorIndicatorStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
-    // Simplified for mobile
-    width: 12,
-    height: 12,
+  const colorIndicatorStyle = {
+    width: colorIndicatorSize,
+    height: colorIndicatorSize,
     backgroundColor: colorData.color,
-    borderRadius: 6,
-    marginRight: 4,
-    borderWidth: color === "white" ? 1 : 0,
-    borderColor: colors.border,
-  } : {
-    // Full styling for desktop and native
-    width: 16,
-    height: 16,
-    backgroundColor: colorData.color,
-    borderRadius: 8,
-    marginRight: 6,
+    borderRadius: borderRadius * 0.8,
+    marginRight,
     borderWidth: color === "white" ? 1 : 0,
     borderColor: colors.border,
   };
 
-  const textStyle = Platform.OS === 'web' && window.innerWidth < 768 ? {
-    // Simplified mobile text
+  const textStyle = {
     color: isSelected ? "#fff" : colors.text,
-    fontSize: 11,
-    fontWeight: "600",
-  } : {
-    // Full styling for desktop and native
-    color: isSelected ? "#fff" : colors.text,
-    fontSize: 12,
+    fontSize,
     fontWeight: "600",
   };
 
@@ -166,6 +210,70 @@ const ToleranceOption = React.memo(({ color, isSelected, onPress }) => {
 const ResistorDisplay = ({ bands, bandCount }) => {
   const { colors, glassmorphism } = useTheme();
 
+  // Responsive resistor sizing
+  const resistorWidth = responsiveValue({
+    mobile: 180,
+    tablet: 220,
+    desktop: 260,
+    large_desktop: 300,
+  });
+
+  const resistorHeight = responsiveValue({
+    mobile: 36,
+    tablet: 44,
+    desktop: 52,
+    large_desktop: 60,
+  });
+
+  const bandWidth = responsiveValue({
+    mobile: bandCount === 5 ? 10 : 12,
+    tablet: bandCount === 5 ? 12 : 15,
+    desktop: bandCount === 5 ? 14 : 18,
+    large_desktop: bandCount === 5 ? 16 : 20,
+  });
+
+  const bandHeight = responsiveValue({
+    mobile: 30,
+    tablet: 38,
+    desktop: 46,
+    large_desktop: 54,
+  });
+
+  const leadWidth = responsiveValue({
+    mobile: 16,
+    tablet: 20,
+    desktop: 24,
+    large_desktop: 28,
+  });
+
+  const paddingVertical = responsiveValue({
+    mobile: 16,
+    tablet: 20,
+    desktop: 24,
+    large_desktop: 28,
+  });
+
+  const paddingHorizontal = responsiveValue({
+    mobile: 20,
+    tablet: 28,
+    desktop: 36,
+    large_desktop: 44,
+  });
+
+  const marginVertical = responsiveValue({
+    mobile: 16,
+    tablet: 20,
+    desktop: 24,
+    large_desktop: 28,
+  });
+
+  const borderRadius = responsiveValue({
+    mobile: 18,
+    tablet: 22,
+    desktop: 26,
+    large_desktop: 30,
+  });
+
   return (
     <View
       style={{
@@ -173,10 +281,10 @@ const ResistorDisplay = ({ bands, bandCount }) => {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "transparent",
-        borderRadius: 24,
-        paddingVertical: 24,
-        paddingHorizontal: 32,
-        marginVertical: 20,
+        borderRadius,
+        paddingVertical,
+        paddingHorizontal,
+        marginVertical,
         shadowColor: glassmorphism.shadowColor,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: glassmorphism.shadowOpacity,
@@ -187,22 +295,22 @@ const ResistorDisplay = ({ bands, bandCount }) => {
       {/* Resistor body */}
       <View
         style={{
-          width: 200,
-          height: 40,
+          width: resistorWidth,
+          height: resistorHeight,
           backgroundColor: "#F5DEB3",
-          borderRadius: 20,
+          borderRadius: resistorHeight * 0.5,
           flexDirection: "row",
           alignItems: "center",
           justifyContent: "space-around",
-          paddingHorizontal: 10,
+          paddingHorizontal: resistorWidth * 0.05,
         }}
       >
         {bands.slice(0, bandCount).map((band, index) => (
           <View
             key={index}
             style={{
-              width: bandCount === 5 ? 12 : 15,
-              height: 35,
+              width: bandWidth,
+              height: bandHeight,
               backgroundColor: band
                 ? RESISTOR_COLORS[band].color
                 : colors.border,
@@ -218,8 +326,8 @@ const ResistorDisplay = ({ bands, bandCount }) => {
       <View
         style={{
           position: "absolute",
-          left: -20,
-          width: 20,
+          left: -leadWidth,
+          width: leadWidth,
           height: 2,
           backgroundColor: "#C0C0C0",
         }}
@@ -227,8 +335,8 @@ const ResistorDisplay = ({ bands, bandCount }) => {
       <View
         style={{
           position: "absolute",
-          right: -20,
-          width: 20,
+          right: -leadWidth,
+          width: leadWidth,
           height: 2,
           backgroundColor: "#C0C0C0",
         }}
@@ -242,6 +350,7 @@ export default function Home() {
   const router = useRouter();
   const { colors, glassmorphism, isDark, toggleTheme } = useTheme();
   const { t } = useLanguage();
+  const responsive = useResponsive();
 
   const [mode, setMode] = useState("colorToValue"); // 'colorToValue' or 'valueToColor'
   const [bandCount, setBandCount] = useState(4);
@@ -498,12 +607,23 @@ export default function Home() {
 
       <ScrollView
         style={{ flex: 1 }}
-        contentContainerStyle={Platform.OS === 'web' && window.innerWidth < 768 ? {
-          // Simplified mobile web styling
-          paddingBottom: insets.bottom + 20,
-        } : {
-          // Full styling for desktop and native
-          paddingBottom: insets.bottom + 20,
+        contentContainerStyle={{
+          paddingBottom: responsivePadding(insets.bottom + 20, insets.bottom + 25, insets.bottom + 30, insets.bottom + 35),
+          // Use more horizontal space on larger screens
+          paddingHorizontal: responsiveValue({
+            mobile: 0,
+            tablet: 20,
+            desktop: 40,
+            large_desktop: 60,
+          }),
+          maxWidth: responsiveValue({
+            mobile: '100%',
+            tablet: '100%',
+            desktop: 1200,
+            large_desktop: 1400,
+          }),
+          alignSelf: 'center',
+          width: '100%',
         }}
         showsVerticalScrollIndicator={true}
         scrollEventThrottle={16}
@@ -513,9 +633,24 @@ export default function Home() {
         <View
           style={{
             flexDirection: "row",
-            marginHorizontal: 20,
-            marginVertical: 10,
-            borderRadius: 16,
+            marginHorizontal: responsiveValue({
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+              large_desktop: 28,
+            }),
+            marginVertical: responsiveValue({
+              mobile: 8,
+              tablet: 10,
+              desktop: 12,
+              large_desktop: 14,
+            }),
+            borderRadius: responsiveValue({
+              mobile: 12,
+              tablet: 14,
+              desktop: 16,
+              large_desktop: 18,
+            }),
             backgroundColor: glassmorphism.backgroundColor,
             borderWidth: 1,
             borderColor: glassmorphism.borderColor,
@@ -531,7 +666,18 @@ export default function Home() {
             onPress={() => setMode("colorToValue")}
             style={{
               flex: 1,
-              padding: 12,
+              paddingVertical: responsiveValue({
+                mobile: 10,
+                tablet: 12,
+                desktop: 14,
+                large_desktop: 16,
+              }),
+              paddingHorizontal: responsiveValue({
+                mobile: 8,
+                tablet: 10,
+                desktop: 12,
+                large_desktop: 14,
+              }),
               backgroundColor:
                 mode === "colorToValue" ? colors.primary : "transparent",
               alignItems: "center",
@@ -541,6 +687,7 @@ export default function Home() {
               style={{
                 color: mode === "colorToValue" ? "#fff" : colors.text,
                 fontWeight: "600",
+                fontSize: responsiveFontSize(14, 15, 16, 17),
               }}
             >
               {t("colorToValue")}
@@ -550,7 +697,18 @@ export default function Home() {
             onPress={() => setMode("valueToColor")}
             style={{
               flex: 1,
-              padding: 12,
+              paddingVertical: responsiveValue({
+                mobile: 10,
+                tablet: 12,
+                desktop: 14,
+                large_desktop: 16,
+              }),
+              paddingHorizontal: responsiveValue({
+                mobile: 8,
+                tablet: 10,
+                desktop: 12,
+                large_desktop: 14,
+              }),
               backgroundColor:
                 mode === "valueToColor" ? colors.primary : "transparent",
               alignItems: "center",
@@ -560,6 +718,7 @@ export default function Home() {
               style={{
                 color: mode === "valueToColor" ? "#fff" : colors.text,
                 fontWeight: "600",
+                fontSize: responsiveFontSize(14, 15, 16, 17),
               }}
             >
               {t("valueToColor")}
@@ -571,9 +730,24 @@ export default function Home() {
         <View
           style={{
             flexDirection: "row",
-            marginHorizontal: 20,
-            marginVertical: 10,
-            borderRadius: 16,
+            marginHorizontal: responsiveValue({
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+              large_desktop: 28,
+            }),
+            marginVertical: responsiveValue({
+              mobile: 8,
+              tablet: 10,
+              desktop: 12,
+              large_desktop: 14,
+            }),
+            borderRadius: responsiveValue({
+              mobile: 12,
+              tablet: 14,
+              desktop: 16,
+              large_desktop: 18,
+            }),
             backgroundColor: glassmorphism.backgroundColor,
             borderWidth: 1,
             borderColor: glassmorphism.borderColor,
@@ -589,7 +763,18 @@ export default function Home() {
             onPress={() => setBandCount(4)}
             style={{
               flex: 1,
-              padding: 12,
+              paddingVertical: responsiveValue({
+                mobile: 10,
+                tablet: 12,
+                desktop: 14,
+                large_desktop: 16,
+              }),
+              paddingHorizontal: responsiveValue({
+                mobile: 8,
+                tablet: 10,
+                desktop: 12,
+                large_desktop: 14,
+              }),
               backgroundColor: bandCount === 4 ? colors.primary : "transparent",
               alignItems: "center",
             }}
@@ -598,6 +783,7 @@ export default function Home() {
               style={{
                 color: bandCount === 4 ? "#fff" : colors.text,
                 fontWeight: "600",
+                fontSize: responsiveFontSize(13, 14, 15, 16),
               }}
             >
               {t("fourBands")}
@@ -607,7 +793,18 @@ export default function Home() {
             onPress={() => setBandCount(5)}
             style={{
               flex: 1,
-              padding: 12,
+              paddingVertical: responsiveValue({
+                mobile: 10,
+                tablet: 12,
+                desktop: 14,
+                large_desktop: 16,
+              }),
+              paddingHorizontal: responsiveValue({
+                mobile: 8,
+                tablet: 10,
+                desktop: 12,
+                large_desktop: 14,
+              }),
               backgroundColor: bandCount === 5 ? colors.primary : "transparent",
               alignItems: "center",
             }}
@@ -616,6 +813,7 @@ export default function Home() {
               style={{
                 color: bandCount === 5 ? "#fff" : colors.text,
                 fontWeight: "600",
+                fontSize: responsiveFontSize(13, 14, 15, 16),
               }}
             >
               {t("fiveBands")}
@@ -630,18 +828,38 @@ export default function Home() {
         {(result || currentResistance) && (
           <View
             style={{
-              marginHorizontal: 20,
-              marginVertical: 20,
+              marginHorizontal: responsiveValue({
+                mobile: 16,
+                tablet: 20,
+                desktop: 24,
+                large_desktop: 28,
+              }),
+              marginVertical: responsiveValue({
+                mobile: 16,
+                tablet: 20,
+                desktop: 24,
+                large_desktop: 28,
+              }),
             }}
           >
             <View
               style={{
-                borderRadius: 20,
+                borderRadius: responsiveValue({
+                  mobile: 16,
+                  tablet: 18,
+                  desktop: 20,
+                  large_desktop: 22,
+                }),
                 overflow: "hidden",
                 backgroundColor: glassmorphism.backgroundColor,
                 borderWidth: 1,
                 borderColor: glassmorphism.borderColor,
-                padding: 24,
+                padding: responsiveValue({
+                  mobile: 18,
+                  tablet: 22,
+                  desktop: 26,
+                  large_desktop: 30,
+                }),
                 shadowColor: glassmorphism.shadowColor,
                 shadowOffset: glassmorphism.shadowOffset,
                 shadowOpacity: glassmorphism.shadowOpacity * 0.5,
@@ -652,21 +870,38 @@ export default function Home() {
               <Text
                 style={{
                   color: colors.text,
-                  fontSize: 18,
+                  fontSize: responsiveFontSize(16, 17, 18, 19),
                   fontWeight: "bold",
-                  marginBottom: 15,
+                  marginBottom: responsiveValue({
+                    mobile: 12,
+                    tablet: 14,
+                    desktop: 16,
+                    large_desktop: 18,
+                  }),
                   textAlign: "center",
                 }}
               >
                 {t("results")}
               </Text>
 
-              <View style={{ marginBottom: 10 }}>
+              <View style={{
+                marginBottom: responsiveValue({
+                  mobile: 8,
+                  tablet: 10,
+                  desktop: 12,
+                  large_desktop: 14,
+                })
+              }}>
                 <Text
                   style={{
                     color: colors.textSecondary,
-                    fontSize: 14,
-                    marginBottom: 5,
+                    fontSize: responsiveFontSize(12, 13, 14, 15),
+                    marginBottom: responsiveValue({
+                      mobile: 4,
+                      tablet: 5,
+                      desktop: 6,
+                      large_desktop: 7,
+                    }),
                   }}
                 >
                   {t("resistance")}
@@ -675,7 +910,7 @@ export default function Home() {
                 <Text
                   style={{
                     color: colors.text,
-                    fontSize: 20,
+                    fontSize: responsiveFontSize(18, 20, 22, 24),
                     fontWeight: "bold",
                   }}
                 >
@@ -684,12 +919,24 @@ export default function Home() {
               </View>
 
               {result && (
-                <View style={{ marginBottom: 10 }}>
+                <View style={{
+                  marginBottom: responsiveValue({
+                    mobile: 8,
+                    tablet: 10,
+                    desktop: 12,
+                    large_desktop: 14,
+                  })
+                }}>
                   <Text
                     style={{
                       color: colors.textSecondary,
-                      fontSize: 14,
-                      marginBottom: 5,
+                      fontSize: responsiveFontSize(12, 13, 14, 15),
+                      marginBottom: responsiveValue({
+                        mobile: 4,
+                        tablet: 5,
+                        desktop: 6,
+                        large_desktop: 7,
+                      }),
                     }}
                   >
                     {t("tolerance")}
@@ -697,7 +944,7 @@ export default function Home() {
                   <Text
                     style={{
                       color: colors.text,
-                      fontSize: 16,
+                      fontSize: responsiveFontSize(14, 15, 16, 17),
                       fontWeight: "600",
                     }}
                   >
@@ -712,27 +959,38 @@ export default function Home() {
         {mode === "valueToColor" && (
           <View
             style={{
-              marginHorizontal: 20,
-              marginVertical: 10,
+              marginHorizontal: responsiveValue({
+                mobile: 16,
+                tablet: 20,
+                desktop: 24,
+                large_desktop: 28,
+              }),
+              marginVertical: responsiveValue({
+                mobile: 8,
+                tablet: 10,
+                desktop: 12,
+                large_desktop: 14,
+              }),
             }}
           >
             <View
-              style={Platform.OS === 'web' && window.innerWidth < 768 ? {
-                // Simplified mobile web styling for better performance
-                borderRadius: 16,
+              style={{
+                borderRadius: responsiveValue({
+                  mobile: 12,
+                  tablet: 14,
+                  desktop: 16,
+                  large_desktop: 18,
+                }),
                 overflow: "hidden",
                 backgroundColor: glassmorphism.backgroundColor,
                 borderWidth: 1,
                 borderColor: glassmorphism.borderColor,
-                padding: 16,
-              } : {
-                // Full styling for desktop and native
-                borderRadius: 20,
-                overflow: "hidden",
-                backgroundColor: glassmorphism.backgroundColor,
-                borderWidth: 1,
-                borderColor: glassmorphism.borderColor,
-                padding: 24,
+                padding: responsiveValue({
+                  mobile: 14,
+                  tablet: 18,
+                  desktop: 22,
+                  large_desktop: 26,
+                }),
                 shadowColor: glassmorphism.shadowColor,
                 shadowOffset: glassmorphism.shadowOffset,
                 shadowOpacity: glassmorphism.shadowOpacity * 0.5,
@@ -743,9 +1001,14 @@ export default function Home() {
               <Text
                 style={{
                   color: colors.text,
-                  fontSize: 16,
+                  fontSize: responsiveFontSize(14, 15, 16, 17),
                   fontWeight: "600",
-                  marginBottom: 10,
+                  marginBottom: responsiveValue({
+                    mobile: 8,
+                    tablet: 10,
+                    desktop: 12,
+                    large_desktop: 14,
+                  }),
                 }}
               >
                 {t("enterValue")}
@@ -757,24 +1020,51 @@ export default function Home() {
                 placeholderTextColor={colors.textSecondary}
                 style={{
                   backgroundColor: colors.surface,
-                  borderRadius: 12,
-                  padding: 15,
+                  borderRadius: responsiveValue({
+                    mobile: 8,
+                    tablet: 10,
+                    desktop: 12,
+                    large_desktop: 14,
+                  }),
+                  padding: responsiveValue({
+                    mobile: 12,
+                    tablet: 14,
+                    desktop: 16,
+                    large_desktop: 18,
+                  }),
                   color: colors.text,
-                  fontSize: 16,
-                  marginBottom: 15,
+                  fontSize: responsiveFontSize(14, 15, 16, 17),
+                  marginBottom: responsiveValue({
+                    mobile: 12,
+                    tablet: 14,
+                    desktop: 16,
+                    large_desktop: 18,
+                  }),
                   borderWidth: 1,
                   borderColor: colors.border,
                 }}
               />
 
               {/* Tolerance Selection */}
-              <View style={{ marginBottom: 15 }}>
+              <View style={{
+                marginBottom: responsiveValue({
+                  mobile: 12,
+                  tablet: 14,
+                  desktop: 16,
+                  large_desktop: 18,
+                })
+              }}>
                 <Text
                   style={{
                     color: colors.text,
-                    fontSize: 14,
+                    fontSize: responsiveFontSize(12, 13, 14, 15),
                     fontWeight: "600",
-                    marginBottom: 8,
+                    marginBottom: responsiveValue({
+                      mobile: 6,
+                      tablet: 8,
+                      desktop: 10,
+                      large_desktop: 12,
+                    }),
                   }}
                 >
                   {t("tolerance")}
@@ -783,7 +1073,12 @@ export default function Home() {
                   style={{
                     flexDirection: "row",
                     flexWrap: "wrap",
-                    gap: 8,
+                    gap: responsiveValue({
+                      mobile: 6,
+                      tablet: 8,
+                      desktop: 10,
+                      large_desktop: 12,
+                    }),
                   }}
                 >
                   {TOLERANCE_COLORS.map((color) => (
@@ -801,17 +1096,41 @@ export default function Home() {
         )}
 
         {mode === "colorToValue" && (
-          <View style={{ marginHorizontal: 20 }}>
+          <View style={{
+            marginHorizontal: responsiveValue({
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+              large_desktop: 28,
+            })
+          }}>
             {Array.from({ length: bandCount }, (_, bandIndex) => (
-              <View key={bandIndex} style={{ marginVertical: 10 }}>
+              <View key={bandIndex} style={{
+                marginVertical: responsiveValue({
+                  mobile: 8,
+                  tablet: 10,
+                  desktop: 12,
+                  large_desktop: 14,
+                })
+              }}>
                 <View
                   style={{
-                    borderRadius: 18,
+                    borderRadius: responsiveValue({
+                      mobile: 14,
+                      tablet: 16,
+                      desktop: 18,
+                      large_desktop: 20,
+                    }),
                     overflow: "hidden",
                     backgroundColor: glassmorphism.backgroundColorLight,
                     borderWidth: 1,
                     borderColor: glassmorphism.borderColor,
-                    padding: 18,
+                    padding: responsiveValue({
+                      mobile: 14,
+                      tablet: 16,
+                      desktop: 18,
+                      large_desktop: 20,
+                    }),
                     shadowColor: glassmorphism.shadowColor,
                     shadowOffset: { width: 0, height: 2 },
                     shadowOpacity: glassmorphism.shadowOpacity * 0.3,
@@ -822,9 +1141,14 @@ export default function Home() {
                   <Text
                     style={{
                       color: colors.text,
-                      fontSize: 16,
+                      fontSize: responsiveFontSize(14, 15, 16, 17),
                       fontWeight: "600",
-                      marginBottom: 4,
+                      marginBottom: responsiveValue({
+                        mobile: 3,
+                        tablet: 4,
+                        desktop: 5,
+                        large_desktop: 6,
+                      }),
                     }}
                   >
                     {bandIndex < bandCount - 2
@@ -836,8 +1160,13 @@ export default function Home() {
                   <Text
                     style={{
                       color: colors.textSecondary,
-                      fontSize: 12,
-                      marginBottom: 10,
+                      fontSize: responsiveFontSize(10, 11, 12, 13),
+                      marginBottom: responsiveValue({
+                        mobile: 8,
+                        tablet: 10,
+                        desktop: 12,
+                        large_desktop: 14,
+                      }),
                     }}
                   >
                     {bandIndex < bandCount - 2
@@ -847,7 +1176,15 @@ export default function Home() {
                         : t("toleranceInstruction")}
                   </Text>
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <View style={{ flexDirection: "row", paddingVertical: 5 }}>
+                    <View style={{
+                      flexDirection: "row",
+                      paddingVertical: responsiveValue({
+                        mobile: 4,
+                        tablet: 5,
+                        desktop: 6,
+                        large_desktop: 7,
+                      })
+                    }}>
                       {getAvailableColors(bandIndex).map((color) => (
                         <ColorBand
                           key={color}
@@ -870,11 +1207,37 @@ export default function Home() {
         <TouchableOpacity
           onPress={() => router.push("/support")}
           style={{
-            marginHorizontal: 20,
-            marginVertical: 10,
+            marginHorizontal: responsiveValue({
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+              large_desktop: 28,
+            }),
+            marginVertical: responsiveValue({
+              mobile: 8,
+              tablet: 10,
+              desktop: 12,
+              large_desktop: 14,
+            }),
             backgroundColor: colors.success,
-            borderRadius: 16,
-            padding: 18,
+            borderRadius: responsiveValue({
+              mobile: 12,
+              tablet: 14,
+              desktop: 16,
+              large_desktop: 18,
+            }),
+            paddingVertical: responsiveValue({
+              mobile: 14,
+              tablet: 16,
+              desktop: 18,
+              large_desktop: 20,
+            }),
+            paddingHorizontal: responsiveValue({
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+              large_desktop: 28,
+            }),
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "center",
@@ -885,11 +1248,27 @@ export default function Home() {
             elevation: 8,
           }}
         >
-          <Heart size={20} color="#fff" style={{ marginRight: 8 }} />
+          <Heart
+            size={responsiveValue({
+              mobile: 18,
+              tablet: 20,
+              desktop: 22,
+              large_desktop: 24,
+            })}
+            color="#fff"
+            style={{
+              marginRight: responsiveValue({
+                mobile: 6,
+                tablet: 8,
+                desktop: 10,
+                large_desktop: 12,
+              })
+            }}
+          />
           <Text
             style={{
               color: "#fff",
-              fontSize: 16,
+              fontSize: responsiveFontSize(14, 15, 16, 17),
               fontWeight: "600",
             }}
           >
@@ -901,11 +1280,37 @@ export default function Home() {
         <TouchableOpacity
           onPress={resetCalculator}
           style={{
-            marginHorizontal: 20,
-            marginVertical: 10,
+            marginHorizontal: responsiveValue({
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+              large_desktop: 28,
+            }),
+            marginVertical: responsiveValue({
+              mobile: 8,
+              tablet: 10,
+              desktop: 12,
+              large_desktop: 14,
+            }),
             backgroundColor: colors.accent,
-            borderRadius: 16,
-            padding: 18,
+            borderRadius: responsiveValue({
+              mobile: 12,
+              tablet: 14,
+              desktop: 16,
+              large_desktop: 18,
+            }),
+            paddingVertical: responsiveValue({
+              mobile: 14,
+              tablet: 16,
+              desktop: 18,
+              large_desktop: 20,
+            }),
+            paddingHorizontal: responsiveValue({
+              mobile: 16,
+              tablet: 20,
+              desktop: 24,
+              large_desktop: 28,
+            }),
             alignItems: "center",
             shadowColor: glassmorphism.shadowColor,
             shadowOffset: glassmorphism.shadowOffset,
@@ -917,7 +1322,7 @@ export default function Home() {
           <Text
             style={{
               color: "#fff",
-              fontSize: 16,
+              fontSize: responsiveFontSize(14, 15, 16, 17),
               fontWeight: "600",
             }}
           >
