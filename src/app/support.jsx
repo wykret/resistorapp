@@ -26,7 +26,6 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import * as Clipboard from "expo-clipboard";
 import QRCodeGenerator from "@/components/QRCodeGenerator";
-import { BannerAd, BannerAdSize, TestIds } from "expo-ads-admob";
 
 // AdSense Ad Component for Web
 const AdSenseAd = () => {
@@ -545,15 +544,7 @@ export default function Support() {
 
         {/* Ads Section */}
         <View style={{ marginHorizontal: 20, marginVertical: 30, alignItems: 'center' }}>
-          {Platform.OS === 'web' ? <AdSenseAd /> : (
-            <BannerAd
-              unitId={__DEV__ ? TestIds.BANNER : 'ca-app-pub-8862246561651365/5961963293'}
-              size={BannerAdSize.BANNER}
-              requestOptions={{
-                requestNonPersonalizedAdsOnly: true,
-              }}
-            />
-          )}
+          <AdSenseAd />
         </View>
       </ScrollView>
     </View>
